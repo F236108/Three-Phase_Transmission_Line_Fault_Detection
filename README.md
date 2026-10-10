@@ -334,12 +334,12 @@ The **Set Q Logistic Regression** missed **45 faults** ($97.88\%$ accuracy) and 
 
 * **Flask Server Backend (`app/server.py`)**: Alternatively, running `python app/server.py` serves the application locally at `http://127.0.0.1:5000` with the `/predict` API route.
 
-* **Architecture Inspired by [zainabbas.me](https://www.zainabbas.me/)**: Built with an authentic electrical engineering aesthetic rather than generic AI templates. Features:
-  - **Space Grotesk & JetBrains Mono Typography**: Clean, modern geometric sans-serif headings with high-contrast monospace numerical readouts.
+* **High-Voltage Protection System Interface**: Built with an authentic electrical engineering aesthetic. Features:
+  - **Space Grotesk & JetBrains Mono Typography**: Clean geometric headings with high-contrast monospace numerical readouts.
   - **Monochrome + Electric Crimson Accent (`#ff3131`)**: Premium minimalist palette with subtle crimson border glows (`rgba(255, 49, 49, 0.25)`).
   - **Floating Spotlight Pill Navbar**: Glassmorphic pill container (`backdrop-filter: blur(18px)`) with smooth tab switching and a built-in Dark/Light mode toggle.
-  - **Watermark Background Geometry**: Faint background typography (`RELAY`) mirroring high-end engineering portfolios.
-  - **Clean Architectural Cards**: Thin 1px borders with top gradient highlights and subtle hover elevations.
+  - **Dynamic Contextual Header**: The top section automatically transforms its titles, metrics, watermark, and badges specifically for each active tab.
+  - **Live 3-Phase Differential & Residual Error Monitor**: Real-time canvas graph computing Kirchhoff residual error ($I_a + I_b + I_c$) and phase-to-phase differences ($|I_a - I_b|, |I_b - I_c|, |I_c - I_a|$) dynamically from input values.
 * **Font Awesome 6.5 Classic**: High-fidelity icons for power transmission, gauges, alerts, waveforms, mathematics, and telemetry.
 * **Three-Phase Standard Color Tags**: Phase A (Red `#ff3131`), Phase B (Amber `#f59e0b`), and Phase C (Blue `#3b82f6`).
 

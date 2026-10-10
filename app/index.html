@@ -6,7 +6,7 @@
   <title>Fault Detection — Three-Phase Transmission Line Protection | AI4003</title>
   <meta name="description" content="Protective relay fault detection on three-phase transmission line using first-principles quadratic logistic regression and RBF SVM." />
 
-  <!-- Google Fonts: Space Grotesk & JetBrains Mono (Identical to zainabbas.me) -->
+  <!-- Google Fonts: Space Grotesk & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -16,8 +16,8 @@
 
   <style>
     /* ════════════════════════════════════════════════════════════
-       ZAIN ABBAS PORTFOLIO DESIGN SYSTEM
-       Theme: Monochrome + Crimson Accent (#ff3131)
+       HIGH-VOLTAGE TRANSMISSION PROTECTION SYSTEM DESIGN
+       Theme: Monochrome + Electric Crimson Accent (#ff3131)
        Typography: Space Grotesk + JetBrains Mono
        ════════════════════════════════════════════════════════════ */
     :root {
@@ -38,12 +38,11 @@
       --danger:       #ff3131;
       
       --radius:       8px;
-      --radius-lg:    14px;
+      --radius-lg:    12px;
       --radius-full:  9999px;
       
       --shadow-sm:    0 1px 3px rgba(0, 0, 0, 0.08);
       --shadow-md:    0 4px 16px rgba(0, 0, 0, 0.10);
-      --shadow-lg:    0 10px 40px rgba(0, 0, 0, 0.12);
       --transition:   0.22s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
@@ -59,7 +58,6 @@
       --accent-glow2: rgba(255, 49, 49, 0.15);
       --shadow-sm:    0 1px 3px rgba(0, 0, 0, 0.4);
       --shadow-md:    0 4px 16px rgba(0, 0, 0, 0.5);
-      --shadow-lg:    0 10px 40px rgba(0, 0, 0, 0.6);
     }
 
     /* ─── RESET & BASE ─── */
@@ -78,100 +76,82 @@
       font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
       background-color: var(--bg);
       color: var(--fg);
-      line-height: 1.6;
+      line-height: 1.5;
       transition: background-color var(--transition), color var(--transition);
       overflow-x: hidden;
       min-height: 100vh;
     }
 
-    ::selection {
-      background: var(--accent);
-      color: #fff;
-    }
+    ::selection { background: var(--accent); color: #fff; }
 
-    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: var(--border-dark); border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
     .container {
       width: 100%;
-      max-width: 1200px;
+      max-width: 1320px;
       margin: 0 auto;
-      padding: 0 2rem;
-      position: relative;
-      z-index: 1;
+      padding: 0 1.5rem;
     }
 
-    /* ─── NAVBAR (Zain Abbas Floating Spotlight Pill) ─── */
+    /* ─── COMPACT TOP NAVBAR ─── */
     #navbar {
-      position: fixed;
-      top: 0; left: 0; right: 0;
+      position: sticky;
+      top: 0;
       z-index: 1000;
-      padding: 1rem 0;
-      pointer-events: none;
-      transition: padding var(--transition);
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.65rem 0;
+      transition: background var(--transition), border var(--transition);
+    }
+    [data-theme="dark"] #navbar {
+      background: rgba(8, 8, 8, 0.88);
     }
 
     .nav-shell {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 2rem;
-      pointer-events: none;
-    }
-
-    .nav-logo, .nav-actions {
-      pointer-events: all;
+      gap: 1rem;
     }
 
     .nav-logo {
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       font-weight: 800;
       letter-spacing: -0.02em;
       color: var(--fg);
       text-decoration: none;
-      transition: color var(--transition);
-    }
-    .nav-logo span { color: var(--accent); }
-    .nav-logo:hover { color: var(--accent); }
-
-    .nav-pill {
-      position: relative;
       display: flex;
       align-items: center;
       gap: 2px;
-      background: rgba(255, 255, 255, 0.75);
-      backdrop-filter: blur(18px) saturate(180%);
-      -webkit-backdrop-filter: blur(18px) saturate(180%);
+      white-space: nowrap;
+    }
+    .nav-logo span { color: var(--accent); }
+
+    .nav-pill {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      background: var(--bg-secondary);
       border: 1px solid var(--border);
       border-radius: var(--radius-full);
-      padding: 5px;
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
-      pointer-events: all;
-      transition: all var(--transition);
-    }
-    [data-theme="dark"] .nav-pill {
-      background: rgba(15, 15, 15, 0.75);
-      border-color: rgba(255, 255, 255, 0.08);
-      box-shadow: 0 4px 32px rgba(0, 0, 0, 0.55);
+      padding: 4px;
     }
 
     .nav-item {
-      position: relative;
-      z-index: 2;
       display: flex;
       align-items: center;
       gap: 6px;
-      padding: 0.45rem 1.1rem;
+      padding: 0.35rem 0.95rem;
       border-radius: var(--radius-full);
-      font-size: 0.825rem;
+      font-size: 0.82rem;
       font-weight: 600;
       color: var(--fg-muted);
       white-space: nowrap;
-      text-decoration: none;
       cursor: pointer;
       background: transparent;
       border: none;
@@ -180,23 +160,20 @@
     }
     .nav-item:hover { color: var(--fg); }
     .nav-item.active {
-      color: var(--accent);
-      background: var(--accent-glow2);
-    }
-    [data-theme="dark"] .nav-item.active {
       color: #fff;
-      background: rgba(255, 49, 49, 0.2);
+      background: var(--accent);
+      box-shadow: 0 2px 8px var(--accent-glow);
     }
 
     .nav-actions {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.5rem;
     }
 
     .theme-btn {
-      width: 38px;
-      height: 38px;
+      width: 34px;
+      height: 34px;
       border-radius: var(--radius);
       border: 1px solid var(--border);
       background: var(--bg-card);
@@ -205,100 +182,58 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       transition: all var(--transition);
     }
     .theme-btn:hover {
       border-color: var(--accent);
       color: var(--accent);
-      transform: translateY(-1px);
     }
 
-    .btn-accent {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.45rem;
-      padding: 0.55rem 1.25rem;
-      background: var(--accent);
-      color: #fff;
-      border: 1px solid var(--accent);
-      border-radius: var(--radius);
-      font-size: 0.85rem;
-      font-weight: 600;
-      text-decoration: none;
-      cursor: pointer;
-      font-family: inherit;
-      transition: all var(--transition);
-    }
-    .btn-accent:hover {
-      background: var(--accent-hover);
-      border-color: var(--accent-hover);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 16px var(--accent-glow);
-    }
-
-    /* ─── HERO SECTION ─── */
-    #hero {
-      padding-top: 8rem;
-      padding-bottom: 4rem;
+    /* ─── SLEEK COMPACT CONTEXT HEADER (Changes per Tab, ZERO SCROLL) ─── */
+    #context-header {
+      padding: 0.85rem 0 1rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.2rem;
+      background: var(--bg);
       position: relative;
-      overflow: hidden;
     }
 
-    /* Giant faint background watermark (signature Zain Abbas element) */
-    .hero-bg-watermark {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: clamp(8rem, 24vw, 18rem);
-      font-weight: 900;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      color: var(--fg);
-      opacity: 0.03;
-      white-space: nowrap;
-      pointer-events: none;
-      z-index: 0;
-      line-height: 1;
-      user-select: none;
-    }
-    [data-theme="dark"] .hero-bg-watermark { opacity: 0.02; }
-
-    /* Ambient drifting blob */
-    .hero-blob {
-      position: absolute;
-      top: -150px;
-      right: -100px;
-      width: 600px;
-      height: 600px;
-      border-radius: 50%;
-      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0.6;
-    }
-
-    .hero-pill-badge {
-      display: inline-flex;
+    .context-row {
+      display: flex;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.35rem 1rem;
-      border-radius: var(--radius-full);
-      font-size: 0.78rem;
-      font-weight: 600;
+      justify-content: space-between;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .context-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .context-tag {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
       color: var(--accent);
       background: var(--accent-glow2);
       border: 1px solid var(--accent-glow);
-      margin-bottom: 1.2rem;
-      letter-spacing: 0.02em;
+      padding: 0.2rem 0.65rem;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      white-space: nowrap;
     }
     .avail-dot {
-      width: 7px;
-      height: 7px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
       background: var(--accent);
-      box-shadow: 0 0 0 3px var(--accent-glow2);
+      box-shadow: 0 0 0 2px var(--accent-glow2);
       animation: pulse-dot 2s ease-in-out infinite;
     }
     @keyframes pulse-dot {
@@ -306,98 +241,81 @@
       50% { opacity: 0.4; transform: scale(0.75); }
     }
 
-    .hero-eyebrow {
-      font-size: 0.95rem;
-      font-weight: 700;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 0.4rem;
-    }
-
-    .hero-headline {
-      font-size: clamp(3rem, 7vw, 5.5rem);
-      font-weight: 900;
-      letter-spacing: -0.04em;
-      line-height: 0.92;
-      color: var(--fg);
-      margin-bottom: 1.2rem;
-    }
-    .hero-headline span { color: var(--accent); }
-
-    .hero-subtitle {
-      font-size: 1.05rem;
-      color: var(--fg-muted);
-      max-width: 640px;
-      line-height: 1.7;
-      margin-bottom: 2rem;
-    }
-
-    /* Hero Stat Counters (Grid telemetry stats) */
-    .hero-stats-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1.5rem;
-      margin-bottom: 3rem;
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      padding: 1.5rem 0;
-    }
-    @media (max-width: 860px) {
-      .hero-stats-row { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
-    }
-
-    .stat-item {
-      display: flex;
-      flex-direction: column;
-    }
-    .stat-number {
-      font-size: 2.2rem;
-      font-weight: 900;
+    .context-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
       color: var(--fg);
       line-height: 1;
-      font-family: 'JetBrains Mono', monospace;
-      letter-spacing: -0.03em;
     }
-    .stat-number span { color: var(--accent); }
-    .stat-label {
-      font-size: 0.78rem;
-      font-weight: 600;
+    .context-title span { color: var(--accent); }
+
+    .context-desc {
+      font-size: 0.85rem;
       color: var(--fg-muted);
+      margin-left: 0.5rem;
+    }
+    @media (max-width: 900px) {
+      .context-desc { display: none; }
+    }
+
+    /* Inline Compact Stats Strip */
+    .context-stats {
+      display: flex;
+      align-items: center;
+      gap: 1.4rem;
+    }
+    .context-stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+    .context-stat-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--fg);
+      line-height: 1;
+    }
+    .context-stat-val span { color: var(--accent); }
+    .context-stat-lbl {
+      font-size: 0.65rem;
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      margin-top: 0.4rem;
+      color: var(--fg-muted);
+      margin-top: 0.2rem;
     }
 
     /* ─── TAB CONTENT PANES ─── */
     .tab-pane {
       display: none;
-      animation: tabFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: tabFadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .tab-pane.active { display: block; }
 
     @keyframes tabFadeIn {
-      from { opacity: 0; transform: translateY(12px); }
+      from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* ─── LIVE DETECTOR GRID ─── */
-    .detector-layout {
+    /* ─── TAB 1: INTEGRATED NO-SCROLL LIVE DETECTOR DASHBOARD ─── */
+    .live-dashboard-grid {
       display: grid;
-      grid-template-columns: 1.1fr 1fr;
-      gap: 2rem;
+      grid-template-columns: 360px 1fr;
+      gap: 1.2rem;
       align-items: start;
     }
-    @media (max-width: 960px) {
-      .detector-layout { grid-template-columns: 1fr; }
+    @media (max-width: 1040px) {
+      .live-dashboard-grid { grid-template-columns: 1fr; }
     }
 
-    /* ─── CARDS (Zain Abbas style with subtle top border & hover) ─── */
+    /* Cards */
     .card {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
-      padding: 2rem;
+      padding: 1.2rem;
       position: relative;
       transition: all var(--transition);
       box-shadow: var(--shadow-sm);
@@ -409,126 +327,104 @@
       height: 2px;
       background: linear-gradient(90deg, transparent, var(--border-dark), transparent);
     }
-    .card:hover {
-      border-color: rgba(255, 49, 49, 0.4);
-      box-shadow: 0 12px 40px var(--accent-glow2);
-      transform: translateY(-3px);
-    }
 
-    .card-header-bar {
+    .card-head {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1.5rem;
-      padding-bottom: 1rem;
+      margin-bottom: 0.85rem;
+      padding-bottom: 0.6rem;
       border-bottom: 1px solid var(--border);
     }
-
-    .card-title {
-      font-size: 1.15rem;
+    .card-head-title {
+      font-size: 0.95rem;
       font-weight: 700;
       display: flex;
       align-items: center;
-      gap: 0.6rem;
+      gap: 0.45rem;
       color: var(--fg);
     }
-    .card-title i { color: var(--accent); }
+    .card-head-title i { color: var(--accent); }
 
     .badge-pill {
-      font-size: 0.72rem;
+      font-size: 0.68rem;
       font-weight: 700;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      padding: 0.3rem 0.8rem;
+      padding: 0.22rem 0.65rem;
       border-radius: var(--radius-full);
       background: var(--bg-secondary);
       border: 1px solid var(--border);
       color: var(--fg-muted);
     }
 
-    /* ─── PRESET CHIPS ─── */
-    .presets-section {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1rem;
-      margin-bottom: 1.5rem;
-    }
-    .presets-label {
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--fg-muted);
-      margin-bottom: 0.6rem;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-    .presets-label i { color: var(--accent); font-size: 0.75rem; }
-
-    .preset-chips-row {
+    /* Presets Strip */
+    .presets-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.5rem;
+      gap: 0.35rem;
+      margin-bottom: 0.85rem;
+      background: var(--bg-secondary);
+      padding: 0.45rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
     }
     .chip {
       background: var(--bg);
       border: 1px solid var(--border);
       color: var(--fg);
-      padding: 0.45rem 0.95rem;
+      padding: 0.3rem 0.65rem;
       border-radius: var(--radius-full);
-      font-size: 0.8rem;
+      font-size: 0.74rem;
       font-weight: 600;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 0.45rem;
+      gap: 0.35rem;
       transition: all var(--transition);
       font-family: inherit;
     }
     .chip:hover {
       border-color: var(--accent);
       color: var(--accent);
-      transform: translateY(-1px);
     }
 
-    /* ─── FORM INPUTS ─── */
+    /* Form Inputs */
     .inputs-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 1.2rem;
+      gap: 0.65rem;
     }
 
     .form-group-title {
       grid-column: 1 / -1;
-      font-size: 0.78rem;
+      font-size: 0.72rem;
       font-weight: 700;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--accent);
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      margin-top: 0.4rem;
+      gap: 0.35rem;
+      margin-top: 0.2rem;
     }
 
     .field-box {
       display: flex;
       flex-direction: column;
-      gap: 0.4rem;
+      gap: 0.2rem;
     }
     .field-box label {
-      font-size: 0.82rem;
+      font-size: 0.74rem;
       font-weight: 600;
       color: var(--fg-muted);
       display: flex;
       align-items: center;
-      gap: 0.4rem;
+      gap: 0.3rem;
     }
     .phase-bullet {
-      width: 7px;
-      height: 7px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
       display: inline-block;
     }
@@ -536,33 +432,33 @@
     .phase-b { background: #f59e0b; }
     .phase-c { background: #3b82f6; }
 
-    .input-field-wrap {
+    .input-wrap {
       position: relative;
     }
-    .input-field-wrap input {
+    .input-wrap input {
       width: 100%;
       background: var(--bg);
       border: 1px solid var(--border-dark);
       color: var(--fg);
-      padding: 0.7rem 2.8rem 0.7rem 0.9rem;
+      padding: 0.45rem 2.2rem 0.45rem 0.65rem;
       border-radius: var(--radius);
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.9rem;
+      font-size: 0.82rem;
       font-weight: 500;
       transition: all var(--transition);
     }
-    .input-field-wrap input:focus {
+    .input-wrap input:focus {
       outline: none;
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--accent-glow2);
+      box-shadow: 0 0 0 2px var(--accent-glow2);
     }
-    .input-field-unit {
+    .input-unit {
       position: absolute;
-      right: 0.9rem;
+      right: 0.6rem;
       top: 50%;
       transform: translateY(-50%);
       color: var(--fg-muted);
-      font-size: 0.78rem;
+      font-size: 0.7rem;
       font-family: 'JetBrains Mono', monospace;
       font-weight: 600;
       pointer-events: none;
@@ -574,42 +470,49 @@
       color: #fff;
       border: 1px solid var(--accent);
       border-radius: var(--radius);
-      padding: 0.9rem 1.5rem;
-      font-size: 0.95rem;
+      padding: 0.65rem 1rem;
+      font-size: 0.88rem;
       font-weight: 700;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.6rem;
+      gap: 0.5rem;
       font-family: inherit;
       transition: all var(--transition);
-      margin-top: 0.6rem;
+      margin-top: 0.35rem;
     }
     .btn-evaluate:hover {
       background: var(--accent-hover);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px var(--accent-glow);
+      box-shadow: 0 4px 14px var(--accent-glow);
     }
 
-    /* ─── OUTPUT RESULT BOXES ─── */
-    .results-stack {
+    /* ── RIGHT COLUMN: RESULTS & LIVE GRAPH STACK (IMMEDIATE VIEWPORT) ── */
+    .right-stack {
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      gap: 1rem;
+    }
+
+    /* Side-by-side Top Results Row */
+    .models-results-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 680px) {
+      .models-results-row { grid-template-columns: 1fr; }
     }
 
     .result-box {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
-      padding: 1.8rem;
+      padding: 1rem 1.1rem;
       position: relative;
       transition: all var(--transition);
     }
-    .result-box.normal {
-      border-color: rgba(22, 163, 74, 0.4);
-    }
+    .result-box.normal { border-color: rgba(22, 163, 74, 0.4); }
     .result-box.normal::before {
       content: '';
       position: absolute;
@@ -619,7 +522,7 @@
     }
     .result-box.fault {
       border-color: rgba(255, 49, 49, 0.5);
-      box-shadow: 0 8px 30px var(--accent-glow2);
+      box-shadow: 0 4px 20px var(--accent-glow2);
     }
     .result-box.fault::before {
       content: '';
@@ -633,25 +536,25 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1rem;
+      margin-bottom: 0.6rem;
     }
     .result-model-title {
-      font-size: 1.05rem;
+      font-size: 0.88rem;
       font-weight: 700;
       color: var(--fg);
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.4rem;
     }
     .result-model-title i { color: var(--accent); }
 
     .status-badge {
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.55rem 1.25rem;
+      gap: 0.4rem;
+      padding: 0.35rem 0.85rem;
       border-radius: var(--radius-full);
-      font-size: 0.9rem;
+      font-size: 0.82rem;
       font-weight: 700;
       letter-spacing: 0.02em;
     }
@@ -668,18 +571,16 @@
     }
     @keyframes alertPulse {
       0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.02); box-shadow: 0 0 15px var(--accent-glow); }
+      50% { transform: scale(1.02); box-shadow: 0 0 10px var(--accent-glow); }
     }
 
-    .gauge-block {
-      margin-top: 1.2rem;
-    }
+    .gauge-block { margin-top: 0.6rem; }
     .gauge-header {
       display: flex;
       justify-content: space-between;
-      font-size: 0.8rem;
+      font-size: 0.72rem;
       color: var(--fg-muted);
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.25rem;
       font-weight: 600;
     }
     .gauge-val {
@@ -688,7 +589,7 @@
       color: var(--fg);
     }
     .gauge-bar-track {
-      height: 8px;
+      height: 6px;
       background: var(--bg-secondary);
       border-radius: var(--radius-full);
       overflow: hidden;
@@ -698,74 +599,132 @@
       height: 100%;
       width: 0%;
       border-radius: var(--radius-full);
-      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s;
+      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .gauge-bar-fill.normal { background: #16a34a; }
     .gauge-bar-fill.fault { background: var(--accent); }
 
-    .result-note {
-      font-size: 0.78rem;
-      color: var(--fg-muted);
-      margin-top: 0.9rem;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
+    /* ─── LIVE 3-PHASE DIFFERENCE ERROR GRAPH (DIRECTLY IN VIEWPORT) ─── */
+    .error-monitor-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.2rem;
+      box-shadow: var(--shadow-sm);
     }
 
-    /* Relay Trip Banner */
-    .relay-callout {
+    .monitor-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.65rem;
+      padding-bottom: 0.45rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .monitor-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--fg);
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+    .monitor-title i { color: var(--accent); }
+
+    .monitor-split {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 1rem;
+      align-items: center;
+    }
+    @media (max-width: 800px) {
+      .monitor-split { grid-template-columns: 1fr; }
+    }
+
+    .canvas-wrap {
       background: var(--bg-secondary);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 1rem 1.2rem;
-      display: flex;
-      gap: 0.8rem;
-      align-items: flex-start;
-      font-size: 0.85rem;
-      color: var(--fg-muted);
+      padding: 0.5rem;
+      position: relative;
     }
-    .relay-callout i {
-      color: var(--accent);
-      font-size: 1.1rem;
-      margin-top: 0.1rem;
-      flex-shrink: 0;
-    }
-    .relay-callout strong { color: var(--fg); }
-
-    /* ─── SECTION HEADING (Zain Abbas style with accent line) ─── */
-    .section-head {
-      margin-bottom: 2.5rem;
-      text-align: left;
-    }
-    .section-tag {
-      font-size: 0.78rem;
-      font-weight: 700;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 0.4rem;
+    #phase-canvas {
+      width: 100%;
+      height: 140px;
       display: block;
     }
-    .section-title {
-      font-size: clamp(1.8rem, 4vw, 2.8rem);
-      font-weight: 900;
-      letter-spacing: -0.03em;
-      color: var(--fg);
-      line-height: 1.1;
-      margin-bottom: 0.8rem;
-    }
-    .section-desc {
-      font-size: 0.98rem;
-      color: var(--fg-muted);
-      max-width: 650px;
-      line-height: 1.7;
-    }
 
-    /* ─── EDA FIGURES GALLERY ─── */
+    .error-stats-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+    .error-card-mini {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.55rem 0.8rem;
+    }
+    .error-mini-head {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--fg-muted);
+      display: flex;
+      justify-content: space-between;
+    }
+    .error-mini-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.15rem;
+      font-weight: 800;
+      margin-top: 0.1rem;
+    }
+    .error-mini-val.ok { color: #16a34a; }
+    .error-mini-val.alert { color: var(--accent); }
+
+    /* Differential Bars Grid */
+    .diff-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.6rem;
+      margin-top: 0.65rem;
+      padding-top: 0.65rem;
+      border-top: 1px solid var(--border);
+    }
+    .diff-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+    .diff-item-head {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--fg-muted);
+    }
+    .diff-bar-track {
+      height: 6px;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .diff-bar-fill {
+      height: 100%;
+      border-radius: var(--radius-full);
+      transition: width 0.35s ease;
+    }
+    .bar-ab { background: #ef4444; }
+    .bar-bc { background: #f59e0b; }
+    .bar-ca { background: #3b82f6; }
+
+    /* ─── FIGURES GALLERY (TAB 2) ─── */
     .figures-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-      gap: 1.8rem;
+      gap: 1.5rem;
     }
     .figure-card {
       background: var(--bg-card);
@@ -779,8 +738,7 @@
     }
     .figure-card:hover {
       border-color: rgba(255, 49, 49, 0.4);
-      transform: translateY(-4px);
-      box-shadow: 0 12px 30px var(--accent-glow2);
+      transform: translateY(-2px);
     }
     .figure-card img {
       width: 100%;
@@ -790,39 +748,39 @@
       border-bottom: 1px solid var(--border);
     }
     .figure-caption {
-      padding: 1.2rem 1.4rem;
+      padding: 1rem 1.2rem;
       flex: 1;
     }
     .figure-caption h4 {
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       font-weight: 700;
       color: var(--fg);
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.35rem;
       display: flex;
       align-items: center;
       gap: 0.4rem;
     }
-    .figure-caption h4 i { color: var(--accent); font-size: 0.85rem; }
+    .figure-caption h4 i { color: var(--accent); font-size: 0.82rem; }
     .figure-caption p {
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       color: var(--fg-muted);
-      line-height: 1.6;
+      line-height: 1.55;
     }
 
-    /* ─── DATA TABLES ─── */
+    /* ─── DATA TABLES (TAB 3) ─── */
     .table-container {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
-      padding: 1.8rem;
-      margin-bottom: 2rem;
+      padding: 1.4rem;
+      margin-bottom: 1.5rem;
       box-shadow: var(--shadow-sm);
     }
     .table-container h3 {
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: 700;
       color: var(--fg);
-      margin-bottom: 1rem;
+      margin-bottom: 0.85rem;
       display: flex;
       align-items: center;
       gap: 0.5rem;
@@ -837,47 +795,40 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.88rem;
+      font-size: 0.85rem;
     }
     th {
       background: var(--bg-secondary);
       color: var(--fg);
       font-weight: 700;
-      padding: 0.85rem 1.2rem;
+      padding: 0.75rem 1rem;
       text-align: left;
       border-bottom: 1px solid var(--border);
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 0.06em;
     }
     td {
-      padding: 0.85rem 1.2rem;
+      padding: 0.75rem 1rem;
       border-bottom: 1px solid var(--border);
       color: var(--fg);
     }
     tr:last-child td { border-bottom: none; }
     tr:hover td { background: var(--bg-secondary); }
 
-    .mono {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.86rem;
-    }
-    .highlight-row {
-      background: rgba(255, 49, 49, 0.04) !important;
-    }
-    .highlight-row td {
-      font-weight: 600;
-    }
+    .mono { font-family: 'JetBrains Mono', monospace; font-size: 0.84rem; }
+    .highlight-row { background: rgba(255, 49, 49, 0.04) !important; }
+    .highlight-row td { font-weight: 600; }
     .text-accent { color: var(--accent); font-weight: 700; }
     .text-success { color: #16a34a; font-weight: 700; }
 
-    /* ─── ANALYSIS (Q&A) ─── */
+    /* ─── ANALYSIS (TAB 4) ─── */
     .qa-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
-      padding: 1.8rem;
-      margin-bottom: 1.5rem;
+      padding: 1.5rem;
+      margin-bottom: 1.2rem;
       transition: all var(--transition);
       position: relative;
     }
@@ -888,20 +839,13 @@
       width: 3px;
       background: var(--border-dark);
       border-radius: var(--radius-lg) 0 0 var(--radius-lg);
-      transition: background var(--transition);
     }
-    .qa-card:hover {
-      border-color: rgba(255, 49, 49, 0.4);
-      box-shadow: 0 8px 30px var(--accent-glow2);
-    }
-    .qa-card:hover::before {
-      background: var(--accent);
-    }
+    .qa-card:hover::before { background: var(--accent); }
     .qa-card h3 {
-      font-size: 1.05rem;
+      font-size: 1rem;
       font-weight: 700;
       color: var(--fg);
-      margin-bottom: 0.8rem;
+      margin-bottom: 0.65rem;
       display: flex;
       align-items: center;
       gap: 0.5rem;
@@ -909,54 +853,47 @@
     .qa-card h3 i { color: var(--accent); }
     .qa-card p {
       color: var(--fg-muted);
-      font-size: 0.94rem;
-      line-height: 1.7;
+      font-size: 0.9rem;
+      line-height: 1.65;
     }
     .qa-card strong { color: var(--fg); }
 
-    /* ─── MATH BOXES ─── */
+    /* ─── MATH BOXES (TAB 5) ─── */
     .formula-box {
       background: var(--bg-secondary);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 1.1rem;
+      padding: 0.95rem;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.88rem;
+      font-size: 0.85rem;
       color: var(--fg);
-      margin: 0.8rem 0;
+      margin: 0.7rem 0;
       overflow-x: auto;
-      line-height: 1.8;
+      line-height: 1.75;
     }
 
     /* ─── FOOTER ─── */
     footer {
       border-top: 1px solid var(--border);
-      padding: 3rem 0;
-      margin-top: 5rem;
+      padding: 2rem 0;
+      margin-top: 3.5rem;
       background: var(--bg-secondary);
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       color: var(--fg-muted);
       text-align: center;
     }
-    footer a {
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 600;
-    }
-    footer a:hover { text-decoration: underline; }
+    footer strong { color: var(--fg); }
   </style>
 </head>
 <body>
 
   <!-- ══════════════════════════════════════════════
-       NAVBAR — Spotlight Floating Pill (Zain Abbas Style)
+       COMPACT STICKY NAVBAR
        ══════════════════════════════════════════════ -->
   <header id="navbar">
-    <div class="nav-shell">
-      <!-- Logo -->
+    <div class="container nav-shell">
       <a href="#" class="nav-logo">RELAY<span>.</span>AI</a>
 
-      <!-- Floating pill nav -->
       <nav class="nav-pill" role="navigation" aria-label="Main navigation">
         <button class="nav-item active" data-tab="tab-detector"><i class="fa-solid fa-gauge-high"></i> Live Detector</button>
         <button class="nav-item" data-tab="tab-eda"><i class="fa-solid fa-chart-line"></i> Exploratory Data</button>
@@ -965,57 +902,49 @@
         <button class="nav-item" data-tab="tab-math"><i class="fa-solid fa-square-root-variable"></i> Math Formulas</button>
       </nav>
 
-      <!-- Right actions -->
       <div class="nav-actions">
         <button class="theme-btn" id="theme-toggle" aria-label="Toggle dark/light mode" title="Toggle theme">
           <i class="fa-solid fa-moon" id="theme-icon"></i>
         </button>
-        <a href="#tab-detector" class="btn-accent" onclick="document.querySelector('[data-tab=tab-detector]').click();">
-          <i class="fa-solid fa-bolt"></i> Evaluate
-        </a>
       </div>
     </div>
   </header>
 
   <!-- ══════════════════════════════════════════════
-       HERO SECTION
+       SLEEK CONTEXT HEADER (Changes per Tab, ZERO SCROLL)
        ══════════════════════════════════════════════ -->
-  <section id="hero">
-    <div class="hero-bg-watermark" aria-hidden="true">RELAY</div>
-    <div class="hero-blob"></div>
-
-    <div class="container">
-      <div class="hero-pill-badge">
-        <span class="avail-dot"></span>
-        3-Phase Substation Telemetry Online
+  <section id="context-header">
+    <div class="container context-row">
+      <div class="context-left">
+        <span class="context-tag" id="context-tag">
+          <span class="avail-dot"></span>
+          <span id="context-tag-text">Telemetry Active</span>
+        </span>
+        <h1 class="context-title" id="context-title">
+          Fault <span>Detection.</span>
+        </h1>
+        <span class="context-desc" id="context-desc">
+          Instantaneous three-phase fault classification &amp; live differential error monitoring.
+        </span>
       </div>
 
-      <p class="hero-eyebrow">Transmission Line Protection</p>
-      <h1 class="hero-headline">
-        Fault<br /><span>Detection.</span>
-      </h1>
-
-      <p class="hero-subtitle">
-        First-principles quadratic logistic regression and Support Vector Machines for high-voltage transmission line fault classification. Built for millisecond trip latency without high-level automated ML libraries.
-      </p>
-
-      <!-- Key Engineering Metrics -->
-      <div class="hero-stats-row">
-        <div class="stat-item">
-          <div class="stat-number">99.67<span>%</span></div>
-          <div class="stat-label">Best RBF Accuracy</div>
+      <!-- Inline Dynamic Metrics Strip -->
+      <div class="context-stats" id="context-stats">
+        <div class="context-stat-item">
+          <div class="context-stat-val" id="stat-1-val">99.67<span>%</span></div>
+          <div class="context-stat-lbl" id="stat-1-lbl">RBF Accuracy</div>
         </div>
-        <div class="stat-item">
-          <div class="stat-number">12<span>/12</span></div>
-          <div class="stat-label">Quadratic Features</div>
+        <div class="context-stat-item">
+          <div class="context-stat-val" id="stat-2-val">12<span>/12</span></div>
+          <div class="context-stat-lbl" id="stat-2-lbl">Features (Set Q)</div>
         </div>
-        <div class="stat-item">
-          <div class="stat-number">6<span>/2401</span></div>
-          <div class="stat-label">Missed Faults (Test)</div>
+        <div class="context-stat-item">
+          <div class="context-stat-val" id="stat-3-val">6<span>/2401</span></div>
+          <div class="context-stat-lbl" id="stat-3-lbl">Missed Faults</div>
         </div>
-        <div class="stat-item">
-          <div class="stat-number">&lt;20<span>ms</span></div>
-          <div class="stat-label">1-Cycle Trip Target</div>
+        <div class="context-stat-item">
+          <div class="context-stat-val" id="stat-4-val">&lt;20<span>ms</span></div>
+          <div class="context-stat-lbl" id="stat-4-lbl">Trip Latency</div>
         </div>
       </div>
     </div>
@@ -1026,84 +955,76 @@
        ══════════════════════════════════════════════ -->
   <main class="container">
 
-    <!-- ── TAB 1: LIVE DETECTOR ── -->
+    <!-- ── TAB 1: INTEGRATED NO-SCROLL LIVE DETECTOR DASHBOARD ── -->
     <section id="tab-detector" class="tab-pane active">
-      <div class="section-head">
-        <span class="section-tag">Instantaneous Classification</span>
-        <h2 class="section-title">Telemetry Diagnostic Console</h2>
-        <p class="section-desc">Enter three-phase instantaneous currents (CTs) and voltages (VTs) to observe simultaneous evaluations from the hand-crafted quadratic logistic model and the RBF support vector machine.</p>
-      </div>
-
-      <div class="detector-layout">
-        <!-- Sensor Inputs Form -->
+      <div class="live-dashboard-grid">
+        
+        <!-- COLUMN 1: SENSOR TELEMETRY INPUTS -->
         <div class="card">
-          <div class="card-header-bar">
-            <span class="card-title"><i class="fa-solid fa-sliders"></i> Sensor Telemetry</span>
+          <div class="card-head">
+            <span class="card-head-title"><i class="fa-solid fa-sliders"></i> Sensor Telemetry</span>
             <span class="badge-pill">Sample (t)</span>
           </div>
 
-          <!-- Presets Section -->
-          <div class="presets-section">
-            <div class="presets-label"><i class="fa-solid fa-bookmark"></i> Benchmark Test Presets</div>
-            <div class="preset-chips-row">
-              <button class="chip" data-preset="normal"><i class="fa-solid fa-circle-check" style="color: #16a34a;"></i> Normal Cycle</button>
-              <button class="chip" data-preset="fault_lg"><i class="fa-solid fa-triangle-exclamation" style="color: var(--accent);"></i> Phase-to-Ground</button>
-              <button class="chip" data-preset="fault_ll"><i class="fa-solid fa-bolt-lightning" style="color: var(--accent);"></i> Phase-to-Phase</button>
-              <button class="chip" data-preset="zero"><i class="fa-solid fa-rotate-left"></i> Zero Baseline</button>
-            </div>
+          <!-- Presets Row -->
+          <div class="presets-row">
+            <button class="chip" data-preset="normal"><i class="fa-solid fa-circle-check" style="color: #16a34a;"></i> Normal</button>
+            <button class="chip" data-preset="fault_lg"><i class="fa-solid fa-triangle-exclamation" style="color: var(--accent);"></i> Phase-Ground</button>
+            <button class="chip" data-preset="fault_ll"><i class="fa-solid fa-bolt-lightning" style="color: var(--accent);"></i> Phase-Phase</button>
+            <button class="chip" data-preset="zero"><i class="fa-solid fa-rotate-left"></i> Zero</button>
           </div>
 
           <form id="sensor-form" onsubmit="event.preventDefault();">
             <div class="inputs-grid">
-              <div class="form-group-title"><i class="fa-solid fa-wave-square"></i> Phase Currents (Amperes)</div>
+              <div class="form-group-title"><i class="fa-solid fa-wave-square"></i> Phase Currents</div>
 
               <div class="field-box">
-                <label for="input-ia"><span class="phase-bullet phase-a"></span> Phase A Current (Ia)</label>
-                <div class="input-field-wrap">
+                <label for="input-ia"><span class="phase-bullet phase-a"></span> Ia Current</label>
+                <div class="input-wrap">
                   <input type="number" step="any" id="input-ia" value="-37.0065" />
-                  <span class="input-field-unit">A</span>
+                  <span class="input-unit">A</span>
                 </div>
               </div>
 
               <div class="field-box">
-                <label for="input-ib"><span class="phase-bullet phase-b"></span> Phase B Current (Ib)</label>
-                <div class="input-field-wrap">
+                <label for="input-ib"><span class="phase-bullet phase-b"></span> Ib Current</label>
+                <div class="input-wrap">
                   <input type="number" step="any" id="input-ib" value="-6.5671" />
-                  <span class="input-field-unit">A</span>
+                  <span class="input-unit">A</span>
                 </div>
               </div>
 
-              <div class="field-box">
-                <label for="input-ic"><span class="phase-bullet phase-c"></span> Phase C Current (Ic)</label>
-                <div class="input-field-wrap">
+              <div class="field-box" style="grid-column: 1 / -1;">
+                <label for="input-ic"><span class="phase-bullet phase-c"></span> Ic Current</label>
+                <div class="input-wrap">
                   <input type="number" step="any" id="input-ic" value="43.5736" />
-                  <span class="input-field-unit">A</span>
+                  <span class="input-unit">A</span>
                 </div>
               </div>
 
-              <div class="form-group-title" style="margin-top: 0.8rem;"><i class="fa-solid fa-plug-circle-bolt"></i> Phase Voltages (per-unit)</div>
+              <div class="form-group-title" style="margin-top: 0.3rem;"><i class="fa-solid fa-plug-circle-bolt"></i> Phase Voltages</div>
 
               <div class="field-box">
-                <label for="input-va"><span class="phase-bullet phase-a"></span> Phase A Voltage (Va)</label>
-                <div class="input-field-wrap">
+                <label for="input-va"><span class="phase-bullet phase-a"></span> Va Voltage</label>
+                <div class="input-wrap">
                   <input type="number" step="any" id="input-va" value="0.2503" />
-                  <span class="input-field-unit">p.u.</span>
+                  <span class="input-unit">pu</span>
                 </div>
               </div>
 
               <div class="field-box">
-                <label for="input-vb"><span class="phase-bullet phase-b"></span> Phase B Voltage (Vb)</label>
-                <div class="input-field-wrap">
+                <label for="input-vb"><span class="phase-bullet phase-b"></span> Vb Voltage</label>
+                <div class="input-wrap">
                   <input type="number" step="any" id="input-vb" value="-0.5874" />
-                  <span class="input-field-unit">p.u.</span>
+                  <span class="input-unit">pu</span>
                 </div>
               </div>
 
-              <div class="field-box">
-                <label for="input-vc"><span class="phase-bullet phase-c"></span> Phase C Voltage (Vc)</label>
-                <div class="input-field-wrap">
+              <div class="field-box" style="grid-column: 1 / -1;">
+                <label for="input-vc"><span class="phase-bullet phase-c"></span> Vc Voltage</label>
+                <div class="input-wrap">
                   <input type="number" step="any" id="input-vc" value="0.3371" />
-                  <span class="input-field-unit">p.u.</span>
+                  <span class="input-unit">pu</span>
                 </div>
               </div>
 
@@ -1114,76 +1035,139 @@
           </form>
         </div>
 
-        <!-- Side-by-Side Prediction Results -->
-        <div class="results-stack">
-          <!-- Logistic Regression Card -->
-          <div id="card-lr" class="result-box normal">
-            <div class="result-header">
-              <span class="result-model-title"><i class="fa-solid fa-calculator"></i> Logistic Regression</span>
-              <span class="badge-pill">Set Q &bull; 12 Features</span>
-            </div>
-            
-            <div id="lr-status" class="status-badge normal">
-              <i class="fa-solid fa-circle-check"></i> Normal Operation
-            </div>
-
-            <div class="gauge-block">
-              <div class="gauge-header">
-                <span>Fault Probability P(y = 1 | x)</span>
-                <span id="lr-prob" class="gauge-val">2.08%</span>
+        <!-- COLUMN 2: RESULTS + 3-PHASE ERROR GRAPH (DIRECTLY IN VIEWPORT) -->
+        <div class="right-stack">
+          
+          <!-- Side-by-side Top Prediction Results -->
+          <div class="models-results-row">
+            <!-- Logistic Regression Result Box -->
+            <div id="card-lr" class="result-box normal">
+              <div class="result-header">
+                <span class="result-model-title"><i class="fa-solid fa-calculator"></i> Logistic Regression</span>
+                <span class="badge-pill">Set Q (12 feat)</span>
               </div>
-              <div class="gauge-bar-track">
-                <div id="lr-bar" class="gauge-bar-fill normal" style="width: 2.08%;"></div>
+              
+              <div id="lr-status" class="status-badge normal">
+                <i class="fa-solid fa-circle-check"></i> Normal Operation
               </div>
-            </div>
 
-            <div class="result-note">
-              <i class="fa-solid fa-microchip" style="color: var(--accent);"></i> NumPy Batch Gradient Descent (&alpha; = 10, 2000 iters). Includes I&sup2; &amp; V&sup2; terms.
-            </div>
-          </div>
-
-          <!-- RBF SVM Card -->
-          <div id="card-svm" class="result-box normal">
-            <div class="result-header">
-              <span class="result-model-title"><i class="fa-solid fa-brain"></i> SVM &mdash; RBF Kernel</span>
-              <span class="badge-pill">Set R &bull; C=100, &gamma;=1</span>
-            </div>
-
-            <div id="svm-status" class="status-badge normal">
-              <i class="fa-solid fa-circle-check"></i> Normal Operation
-            </div>
-
-            <div class="gauge-block" style="margin-top: 1.5rem;">
-              <div class="gauge-header">
-                <span>Reproducing Kernel Hilbert Space (RKHS)</span>
-                <span id="svm-meta" class="gauge-val">266 Support Vectors</span>
+              <div class="gauge-block">
+                <div class="gauge-header">
+                  <span>Fault Probability P(y=1|x)</span>
+                  <span id="lr-prob" class="gauge-val">2.08%</span>
+                </div>
+                <div class="gauge-bar-track">
+                  <div id="lr-bar" class="gauge-bar-fill normal" style="width: 2.08%;"></div>
+                </div>
               </div>
             </div>
 
-            <div class="result-note">
-              <i class="fa-solid fa-circle-info" style="color: var(--accent);"></i> Top validation score: 99.67%. Maps 6 raw features non-linearly.
+            <!-- SVM Result Box -->
+            <div id="card-svm" class="result-box normal">
+              <div class="result-header">
+                <span class="result-model-title"><i class="fa-solid fa-brain"></i> RBF Kernel SVM</span>
+                <span class="badge-pill">C=100, &gamma;=1</span>
+              </div>
+
+              <div id="svm-status" class="status-badge normal">
+                <i class="fa-solid fa-circle-check"></i> Normal Operation
+              </div>
+
+              <div class="gauge-block">
+                <div class="gauge-header">
+                  <span>Decision Space RKHS</span>
+                  <span class="gauge-val">266 Support Vectors</span>
+                </div>
+                <div class="gauge-bar-track">
+                  <div class="gauge-bar-fill normal" style="width: 100%;"></div>
+                </div>
+              </div>
             </div>
           </div>
 
-          <!-- Relay Logic Callout -->
-          <div class="relay-callout">
-            <i class="fa-solid fa-lightbulb"></i>
-            <div>
-              <strong>Protection Interlock:</strong> If either classifier detects an abnormal condition, the digital protection unit asserts a trip signal to the circuit breaker in &lt; 20 ms (1 AC cycle) to de-energize the transmission feeder.
+          <!-- LIVE 3-PHASE DIFFERENCE ERROR GRAPH & MONITOR (IMMEDIATELY VISIBLE) -->
+          <div class="error-monitor-box">
+            <div class="monitor-top-bar">
+              <span class="monitor-title"><i class="fa-solid fa-chart-line"></i> 3-Phase Differential &amp; Residual Error Monitor</span>
+              <span class="badge-pill" id="error-status-pill"><i class="fa-solid fa-circle-check" style="color:#16a34a"></i> Balanced Phase Symmetry</span>
             </div>
+
+            <div class="monitor-split">
+              <!-- Live Oscilloscope & Phase Waveform Canvas -->
+              <div class="canvas-wrap">
+                <canvas id="phase-canvas" width="560" height="140"></canvas>
+                <div style="display:flex; justify-content:space-between; font-size:0.68rem; color:var(--fg-muted); margin-top:0.35rem;">
+                  <span><span class="phase-bullet phase-a"></span> Phase A</span>
+                  <span><span class="phase-bullet phase-b"></span> Phase B</span>
+                  <span><span class="phase-bullet phase-c"></span> Phase C</span>
+                  <span style="color:var(--accent); font-weight:700;">● Residual (Ia+Ib+Ic)</span>
+                </div>
+              </div>
+
+              <!-- Numerical Error Cards -->
+              <div class="error-stats-panel">
+                <div class="error-card-mini">
+                  <div class="error-mini-head">
+                    <span>Neutral Residual Error</span>
+                    <i class="fa-solid fa-circle-nodes" style="color:var(--accent)"></i>
+                  </div>
+                  <div class="error-mini-val ok" id="metric-ires">0.00 A</div>
+                  <div style="font-size:0.65rem; color:var(--fg-muted);">KCL Sum: Ia + Ib + Ic (0A = Balanced)</div>
+                </div>
+
+                <div class="error-card-mini">
+                  <div class="error-mini-head">
+                    <span>Peak Phase Differential</span>
+                    <i class="fa-solid fa-arrows-split-up-and-left" style="color:var(--accent)"></i>
+                  </div>
+                  <div class="error-mini-val ok" id="metric-maxdiff">80.58 A</div>
+                  <div style="font-size:0.65rem; color:var(--fg-muted);">&Delta;I max: max(|Ia-Ib|, |Ib-Ic|, |Ic-Ia|)</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Instantaneous Phase Differences Breakdown Bars -->
+            <div class="diff-grid">
+              <div class="diff-item">
+                <div class="diff-item-head">
+                  <span>|Ia &minus; Ib| (Phase A &minus; B)</span>
+                  <span id="diff-val-ab" class="mono">30.44 A</span>
+                </div>
+                <div class="diff-bar-track">
+                  <div id="diff-bar-ab" class="diff-bar-fill bar-ab" style="width: 5%;"></div>
+                </div>
+              </div>
+
+              <div class="diff-item">
+                <div class="diff-item-head">
+                  <span>|Ib &minus; Ic| (Phase B &minus; C)</span>
+                  <span id="diff-val-bc" class="mono">50.14 A</span>
+                </div>
+                <div class="diff-bar-track">
+                  <div id="diff-bar-bc" class="diff-bar-fill bar-bc" style="width: 8%;"></div>
+                </div>
+              </div>
+
+              <div class="diff-item">
+                <div class="diff-item-head">
+                  <span>|Ic &minus; Ia| (Phase C &minus; A)</span>
+                  <span id="diff-val-ca" class="mono">80.58 A</span>
+                </div>
+                <div class="diff-bar-track">
+                  <div id="diff-bar-ca" class="diff-bar-fill bar-ca" style="width: 12%;"></div>
+                </div>
+              </div>
+            </div>
+
           </div>
+
         </div>
+
       </div>
     </section>
 
     <!-- ── TAB 2: EXPLORATORY DATA ANALYSIS ── -->
     <section id="tab-eda" class="tab-pane">
-      <div class="section-head">
-        <span class="section-tag">Exploratory Visualisations</span>
-        <h2 class="section-title">Physical Signal Analysis</h2>
-        <p class="section-desc">Six high-resolution plots illustrating why raw instantaneous measurements cannot be separated by linear planes, followed by the gradient descent and SVM optimization profiles.</p>
-      </div>
-
       <div class="figures-grid">
         <div class="figure-card">
           <img src="../results/fig1_currents_vs_row.png" onerror="this.src='/results/fig1_currents_vs_row.png'" alt="Current Waveforms" />
@@ -1237,13 +1221,6 @@
 
     <!-- ── TAB 3: BENCHMARK TABLES ── -->
     <section id="tab-tables" class="tab-pane">
-      <div class="section-head">
-        <span class="section-tag">Experimental Benchmark</span>
-        <h2 class="section-title">Official Tables (1 to 5)</h2>
-        <p class="section-desc">Complete numerical metrics strictly adhering to Section 4 of the assignment guidelines.</p>
-      </div>
-
-      <!-- Table 1 -->
       <div class="table-container">
         <h3><i class="fa-solid fa-table"></i> Table 1 &mdash; Data Preparation & Partitioning</h3>
         <div class="tbl-scroll">
@@ -1261,7 +1238,6 @@
         </div>
       </div>
 
-      <!-- Table 2 -->
       <div class="table-container">
         <h3><i class="fa-solid fa-table"></i> Table 2 &mdash; Logistic Regression Optimization</h3>
         <div class="tbl-scroll">
@@ -1275,7 +1251,6 @@
         </div>
       </div>
 
-      <!-- Table 3 -->
       <div class="table-container">
         <h3><i class="fa-solid fa-table"></i> Table 3 &mdash; SVM Validation Grid Matrix</h3>
         <div class="tbl-scroll">
@@ -1299,7 +1274,6 @@
         </div>
       </div>
 
-      <!-- Table 4 -->
       <div class="table-container">
         <h3><i class="fa-solid fa-table"></i> Table 4 &mdash; Held-Out Test Evaluation (N = 2,401)</h3>
         <div class="tbl-scroll">
@@ -1315,7 +1289,6 @@
         </div>
       </div>
 
-      <!-- Table 5 -->
       <div class="table-container">
         <h3><i class="fa-solid fa-table"></i> Table 5 &mdash; Learned Parameters &theta; (Set Q Model)</h3>
         <div class="tbl-scroll">
@@ -1343,12 +1316,6 @@
 
     <!-- ── TAB 4: RELAY ANALYSIS (Q&A) ── -->
     <section id="tab-analysis" class="tab-pane">
-      <div class="section-head">
-        <span class="section-tag">Engineering Analysis</span>
-        <h2 class="section-title">Protective Relaying Viva Q&A</h2>
-        <p class="section-desc">Theoretical and physical solutions to all six assignment questions.</p>
-      </div>
-
       <div class="qa-card">
         <h3><i class="fa-solid fa-circle-question"></i> 6.1 &mdash; Why do LR (Set R) and Linear SVM score almost identically?</h3>
         <p>Both models are <strong>linear classifiers</strong> operating on the exact same 6 standardized features. Logistic regression searches for the hyperplane minimizing negative log-likelihood; Linear SVM maximizes the margin. Both are constrained to a flat hyperplane in 6D space. Because the normal operating states form a compact core surrounded by an annular ring of fault states, no flat plane can separate the interior cluster from the exterior ring. Both models converge to essentially the same boundary (~72.6% &ndash; 73.6%), confirming that <strong>raw instantaneous measurements are not linearly separable</strong>.</p>
@@ -1382,12 +1349,6 @@
 
     <!-- ── TAB 5: MATH FORMULATIONS ── -->
     <section id="tab-math" class="tab-pane">
-      <div class="section-head">
-        <span class="section-tag">Pure NumPy Implementation</span>
-        <h2 class="section-title">Mathematical Formulations</h2>
-        <p class="section-desc">From-scratch derivations and vectorized update equations written without Scikit-Learn helpers.</p>
-      </div>
-
       <div class="qa-card">
         <h3><i class="fa-solid fa-square-root-variable"></i> 1. Sigmoid Function & Hypothesis</h3>
         <div class="formula-box">
@@ -1432,9 +1393,9 @@
        ══════════════════════════════════════════════ -->
   <footer>
     <div class="container">
-      <p>AI4003 Applied Machine Learning &mdash; Assignment 02 | Three-Phase Transmission Line Fault Detection</p>
-      <p style="margin-top: 0.5rem; font-size: 0.8rem;">
-        Design architecture inspired by <a href="https://www.zainabbas.me/" target="_blank" rel="noopener">zainabbas.me</a> &bull; Space Grotesk &bull; Monochrome &plus; Crimson Accent (#ff3131)
+      <p><strong>AI4003 Applied Machine Learning &mdash; Assignment 02</strong> | Three-Phase Transmission Line Fault Detection System</p>
+      <p style="margin-top: 0.35rem; font-size: 0.78rem;">
+        Space Grotesk &bull; JetBrains Mono &bull; Monochrome &plus; Crimson Accent (#ff3131)
       </p>
     </div>
   </footer>
@@ -1472,18 +1433,99 @@
       };
     }
 
-    // Tab Navigation
+    // Dynamic Tab Data Configuration
+    const TAB_HEADER_DATA = {
+      'tab-detector': {
+        tag: 'Telemetry Active',
+        title: 'Fault <span>Detection.</span>',
+        desc: 'Instantaneous three-phase fault classification &amp; live differential error monitoring.',
+        stats: [
+          { val: '99.67<span>%</span>', lbl: 'RBF Accuracy' },
+          { val: '12<span>/12</span>', lbl: 'Features (Set Q)' },
+          { val: '6<span>/2401</span>', lbl: 'Missed Faults' },
+          { val: '<20<span>ms</span>', lbl: 'Trip Latency' }
+        ]
+      },
+      'tab-eda': {
+        tag: 'Signal Analysis',
+        title: 'Waveform <span>Exploration.</span>',
+        desc: 'Physical current waveforms, annular phase-space geometry, and optimization convergence.',
+        stats: [
+          { val: '12,001', lbl: 'Data Rows' },
+          { val: '6', lbl: 'Telemetry Figures' },
+          { val: '3', lbl: 'Phase Channels' },
+          { val: '4', lbl: 'Alpha Rates' }
+        ]
+      },
+      'tab-tables': {
+        tag: 'Benchmark Records',
+        title: 'Empirical <span>Tables.</span>',
+        desc: 'Comprehensive records for data cleaning, train/val/test splits, logistic regression, and SVM grids.',
+        stats: [
+          { val: '7,200', lbl: 'Train Rows' },
+          { val: '2,400', lbl: 'Val Rows' },
+          { val: '2,401', lbl: 'Test Rows' },
+          { val: '5', lbl: 'Official Tables' }
+        ]
+      },
+      'tab-analysis': {
+        tag: 'Protection Review',
+        title: 'Relay <span>Analysis.</span>',
+        desc: 'Academic &amp; viva defense justifications for learned parameter signs and tripping criteria.',
+        stats: [
+          { val: '6', lbl: 'Viva Questions' },
+          { val: '5,835', lbl: 'Linear SVs' },
+          { val: '266', lbl: 'RBF SVs' },
+          { val: '100<span>%</span>', lbl: 'Explainability' }
+        ]
+      },
+      'tab-math': {
+        tag: 'First Principles',
+        title: 'Math <span>Formulations.</span>',
+        desc: 'Pure NumPy derivations: Sigmoid hypothesis, clipped cost J(&theta;), and batch LMS gradient descent.',
+        stats: [
+          { val: '0', lbl: 'Sklearn Helpers' },
+          { val: '1e-12', lbl: 'Loss Clipping' },
+          { val: '2,000', lbl: 'Iterations' },
+          { val: 'LMS', lbl: 'Batch GD Rule' }
+        ]
+      }
+    };
+
+    function updateContextForTab(tabId) {
+      const data = TAB_HEADER_DATA[tabId];
+      if (!data) return;
+
+      document.getElementById('context-tag-text').textContent = data.tag;
+      document.getElementById('context-title').innerHTML = data.title;
+      document.getElementById('context-desc').innerHTML = data.desc;
+
+      document.getElementById('stat-1-val').innerHTML = data.stats[0].val;
+      document.getElementById('stat-1-lbl').textContent = data.stats[0].lbl;
+      document.getElementById('stat-2-val').innerHTML = data.stats[1].val;
+      document.getElementById('stat-2-lbl').textContent = data.stats[1].lbl;
+      document.getElementById('stat-3-val').innerHTML = data.stats[2].val;
+      document.getElementById('stat-3-lbl').textContent = data.stats[2].lbl;
+      document.getElementById('stat-4-val').innerHTML = data.stats[3].val;
+      document.getElementById('stat-4-lbl').textContent = data.stats[3].lbl;
+    }
+
+    // Tab Navigation Event Listeners
     document.querySelectorAll('.nav-item').forEach(btn => {
       btn.addEventListener('click', () => {
+        const tabId = btn.dataset.tab;
         document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
         document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
         btn.classList.add('active');
-        const target = document.getElementById(btn.dataset.tab);
+        const target = document.getElementById(tabId);
         if (target) target.classList.add('active');
+
+        // Dynamically update the header!
+        updateContextForTab(tabId);
       });
     });
 
-    // Dark / Light Theme Toggle (identical to zainabbas.me)
+    // Dark / Light Theme Toggle
     const themeToggle = document.getElementById('theme-toggle');
     const themeIcon = document.getElementById('theme-icon');
     const htmlElem = document.documentElement;
@@ -1493,6 +1535,7 @@
       const next = current === 'dark' ? 'light' : 'dark';
       htmlElem.setAttribute('data-theme', next);
       themeIcon.className = next === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+      drawPhaseCanvas();
     });
 
     // Presets
@@ -1517,10 +1560,18 @@
       });
     });
 
+    // Input change listeners for instant live graph updates
+    ['ia','ib','ic','va','vb','vc'].forEach(id => {
+      document.getElementById('input-' + id).addEventListener('input', runDiagnostic);
+    });
+
     document.getElementById('btn-predict').addEventListener('click', runDiagnostic);
+
+    let currentVals = [-37.0065, -6.5671, 43.5736, 0.2503, -0.5874, 0.3371];
 
     async function runDiagnostic() {
       const vals = ['ia','ib','ic','va','vb','vc'].map(id => parseFloat(document.getElementById('input-' + id).value) || 0);
+      currentVals = vals;
       const payload = { Ia: vals[0], Ib: vals[1], Ic: vals[2], Va: vals[3], Vb: vals[4], Vc: vals[5] };
 
       let result = null;
@@ -1538,10 +1589,11 @@
       if (!result) {
         result = evaluateLocal(vals);
       }
-      renderDiagnostic(result);
+      renderDiagnostic(result, vals);
+      drawPhaseCanvas();
     }
 
-    function renderDiagnostic(data) {
+    function renderDiagnostic(data, rawVals) {
       const lrIsFault = data.logistic.label === 1;
       const lrProbPct = (data.logistic.probability * 100).toFixed(2);
 
@@ -1553,7 +1605,7 @@
       lrCard.className = `result-box ${lrIsFault ? 'fault' : 'normal'}`;
       lrStatus.className = `status-badge ${lrIsFault ? 'fault' : 'normal'}`;
       lrStatus.innerHTML = lrIsFault 
-        ? `<i class="fa-solid fa-triangle-exclamation"></i> FAULT DETECTED &mdash; Trip Breaker`
+        ? `<i class="fa-solid fa-triangle-exclamation"></i> FAULT TRIP`
         : `<i class="fa-solid fa-circle-check"></i> Normal Operation`;
       lrProb.textContent = `${lrProbPct}%`;
       lrBar.style.width = `${Math.min(100, Math.max(0, lrProbPct))}%`;
@@ -1564,12 +1616,171 @@
       const svmStatus = document.getElementById('svm-status');
       svmCard.className = `result-box ${svmIsFault ? 'fault' : 'normal'}`;
       svmStatus.className = `status-badge ${svmIsFault ? 'fault' : 'normal'}`;
-      svmStatus.innerHTML = svmIsFault
-        ? `<i class="fa-solid fa-triangle-exclamation"></i> FAULT DETECTED &mdash; Trip Breaker`
+      svmStatus.innerHTML = svmIsFault 
+        ? `<i class="fa-solid fa-triangle-exclamation"></i> FAULT TRIP`
         : `<i class="fa-solid fa-circle-check"></i> Normal Operation`;
+
+      // ── UPDATE LIVE 3-PHASE ERROR DIFFERENTIAL VALUES ──
+      const [ia, ib, ic] = rawVals;
+      const iResidual = ia + ib + ic;
+      const diffAB = Math.abs(ia - ib);
+      const diffBC = Math.abs(ib - ic);
+      const diffCA = Math.abs(ic - ia);
+      const maxPhaseDiff = Math.max(diffAB, diffBC, diffCA);
+
+      const mIres = document.getElementById('metric-ires');
+      const mMaxdiff = document.getElementById('metric-maxdiff');
+      const pill = document.getElementById('error-status-pill');
+
+      mIres.textContent = `${iResidual >= 0 ? '+' : ''}${iResidual.toFixed(1)} A`;
+      mMaxdiff.textContent = `${maxPhaseDiff.toFixed(1)} A`;
+
+      // Status indicator based on physical criteria
+      if (Math.abs(iResidual) > 25 || maxPhaseDiff > 250) {
+        mIres.className = 'error-mini-val alert';
+        mMaxdiff.className = 'error-mini-val alert';
+        pill.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="color:var(--accent)"></i> Phase Unbalance Detected`;
+        pill.style.borderColor = 'rgba(255,49,49,0.4)';
+        pill.style.color = 'var(--accent)';
+      } else {
+        mIres.className = 'error-mini-val ok';
+        mMaxdiff.className = 'error-mini-val ok';
+        pill.innerHTML = `<i class="fa-solid fa-circle-check" style="color:#16a34a"></i> Balanced Phase Symmetry`;
+        pill.style.borderColor = 'var(--border)';
+        pill.style.color = 'var(--fg-muted)';
+      }
+
+      // Update differential error breakdown bars
+      const scaleRef = 1000;
+      document.getElementById('diff-val-ab').textContent = `${diffAB.toFixed(1)} A`;
+      document.getElementById('diff-val-bc').textContent = `${diffBC.toFixed(1)} A`;
+      document.getElementById('diff-val-ca').textContent = `${diffCA.toFixed(1)} A`;
+
+      document.getElementById('diff-bar-ab').style.width = `${Math.min(100, Math.max(4, (diffAB / scaleRef) * 100))}%`;
+      document.getElementById('diff-bar-bc').style.width = `${Math.min(100, Math.max(4, (diffBC / scaleRef) * 100))}%`;
+      document.getElementById('diff-bar-ca').style.width = `${Math.min(100, Math.max(4, (diffCA / scaleRef) * 100))}%`;
     }
 
-    // Run initial diagnostic on page load
+    // ── DRAW DYNAMIC HTML5 CANVAS 3-PHASE OSCILLOSCOPE GRAPH ──
+    function drawPhaseCanvas() {
+      const canvas = document.getElementById('phase-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Background Grid
+      ctx.fillStyle = isDark ? '#111111' : '#f5f5f5';
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.strokeStyle = isDark ? '#222222' : '#e5e7eb';
+      ctx.lineWidth = 1;
+
+      for (let x = 0; x <= w; x += 35) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, h);
+        ctx.stroke();
+      }
+      for (let y = 0; y <= h; y += 28) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+      }
+
+      // Zero baseline
+      const zeroY = h / 2;
+      ctx.strokeStyle = isDark ? '#444444' : '#d1d5db';
+      ctx.lineWidth = 1.2;
+      ctx.setLineDash([3, 3]);
+      ctx.beginPath();
+      ctx.moveTo(0, zeroY);
+      ctx.lineTo(w, zeroY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      const [ia, ib, ic] = currentVals;
+      const iResidual = ia + ib + ic;
+      const maxVal = Math.max(160, Math.abs(ia), Math.abs(ib), Math.abs(ic), Math.abs(iResidual));
+      const scaleY = (h * 0.40) / maxVal;
+
+      // 1. Draw 3-Phase Sinusoidal Waveforms
+      const phases = [
+        { name: 'Ia', val: ia, offset: 0, color: '#ef4444' },
+        { name: 'Ib', val: ib, offset: (2 * Math.PI) / 3, color: '#f59e0b' },
+        { name: 'Ic', val: ic, offset: (4 * Math.PI) / 3, color: '#3b82f6' }
+      ];
+
+      phases.forEach(p => {
+        ctx.strokeStyle = p.color;
+        ctx.lineWidth = 2.0;
+        ctx.beginPath();
+        for (let x = 0; x <= w; x++) {
+          const t = (x / w) * 2 * Math.PI;
+          const y = zeroY - Math.sin(t + p.offset) * Math.abs(p.val) * scaleY;
+          if (x === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      });
+
+      // 2. Draw Neutral Residual Current Error Waveform (Ia + Ib + Ic)
+      ctx.strokeStyle = '#ff3131';
+      ctx.lineWidth = 2.6;
+      ctx.setLineDash([5, 3]);
+      ctx.beginPath();
+      for (let x = 0; x <= w; x++) {
+        const t = (x / w) * 2 * Math.PI;
+        const waveA = Math.sin(t) * ia;
+        const waveB = Math.sin(t + (2 * Math.PI) / 3) * ib;
+        const waveC = Math.sin(t + (4 * Math.PI) / 3) * ic;
+        const waveRes = waveA + waveB + waveC;
+        const y = zeroY - waveRes * scaleY;
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // 3. Draw Instantaneous Current Markers at Center Line
+      const markerX = w * 0.70;
+      ctx.strokeStyle = isDark ? '#ffffff' : '#111111';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(markerX, 8);
+      ctx.lineTo(markerX, h - 8);
+      ctx.stroke();
+
+      phases.forEach(p => {
+        const py = zeroY - p.val * scaleY;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(markerX, py, 4.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+      });
+
+      const resY = zeroY - iResidual * scaleY;
+      ctx.fillStyle = Math.abs(iResidual) > 25 ? '#ff3131' : '#16a34a';
+      ctx.beginPath();
+      ctx.arc(markerX, resY, 5.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      ctx.fillStyle = isDark ? '#e2e8f0' : '#1e293b';
+      ctx.font = '600 10px JetBrains Mono';
+      ctx.fillText(`Residual = ${iResidual >= 0 ? '+' : ''}${iResidual.toFixed(1)} A`, 10, 18);
+    }
+
+    // Initial trigger on page load
     runDiagnostic();
   </script>
 </body>
