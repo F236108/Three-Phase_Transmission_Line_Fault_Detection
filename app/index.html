@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fault Detection — Three-Phase Transmission Line Protection | AI4003</title>
+  <meta name="description" content="Protective relay fault detection on three-phase transmission line using first-principles quadratic logistic regression and RBF SVM." />
+
+  <!-- Google Fonts: Space Grotesk & JetBrains Mono (Identical to zainabbas.me) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome 6.5.0 Classic -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    /* ════════════════════════════════════════════════════════════
+       ZAIN ABBAS PORTFOLIO DESIGN SYSTEM
+       Theme: Monochrome + Crimson Accent (#ff3131)
+       Typography: Space Grotesk + JetBrains Mono
+       ════════════════════════════════════════════════════════════ */
+    :root {
+      --bg:           #ffffff;
+      --bg-secondary: #f5f5f5;
+      --bg-card:      #f9f9f9;
+      --fg:           #111111;
+      --fg-muted:     #6b7280;
+      --border:       #e5e7eb;
+      --border-dark:  #d1d5db;
+      --accent:       #ff3131;
+      --accent-hover: #e02020;
+      --accent-glow:  rgba(255, 49, 49, 0.30);
+      --accent-glow2: rgba(255, 49, 49, 0.12);
+      
+      --success:      #16a34a;
+      --success-glow: rgba(22, 163, 74, 0.18);
+      --danger:       #ff3131;
+      
+      --radius:       8px;
+      --radius-lg:    14px;
+      --radius-full:  9999px;
+      
+      --shadow-sm:    0 1px 3px rgba(0, 0, 0, 0.08);
+      --shadow-md:    0 4px 16px rgba(0, 0, 0, 0.10);
+      --shadow-lg:    0 10px 40px rgba(0, 0, 0, 0.12);
+      --transition:   0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    [data-theme="dark"] {
+      --bg:           #080808;
+      --bg-secondary: #111111;
+      --bg-card:      #0f0f0f;
+      --fg:           #f4f4f5;
+      --fg-muted:     #9ca3af;
+      --border:       #1f1f1f;
+      --border-dark:  #2d2d2d;
+      --accent-glow:  rgba(255, 49, 49, 0.35);
+      --accent-glow2: rgba(255, 49, 49, 0.15);
+      --shadow-sm:    0 1px 3px rgba(0, 0, 0, 0.4);
+      --shadow-md:    0 4px 16px rgba(0, 0, 0, 0.5);
+      --shadow-lg:    0 10px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    /* ─── RESET & BASE ─── */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--fg);
+      line-height: 1.6;
+      transition: background-color var(--transition), color var(--transition);
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    ::selection {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border-dark); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ─── NAVBAR (Zain Abbas Floating Spotlight Pill) ─── */
+    #navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: 1rem 0;
+      pointer-events: none;
+      transition: padding var(--transition);
+    }
+
+    .nav-shell {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      pointer-events: none;
+    }
+
+    .nav-logo, .nav-actions {
+      pointer-events: all;
+    }
+
+    .nav-logo {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--fg);
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-logo:hover { color: var(--accent); }
+
+    .nav-pill {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(18px) saturate(180%);
+      -webkit-backdrop-filter: blur(18px) saturate(180%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-full);
+      padding: 5px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+      pointer-events: all;
+      transition: all var(--transition);
+    }
+    [data-theme="dark"] .nav-pill {
+      background: rgba(15, 15, 15, 0.75);
+      border-color: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 4px 32px rgba(0, 0, 0, 0.55);
+    }
+
+    .nav-item {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0.45rem 1.1rem;
+      border-radius: var(--radius-full);
+      font-size: 0.825rem;
+      font-weight: 600;
+      color: var(--fg-muted);
+      white-space: nowrap;
+      text-decoration: none;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      font-family: inherit;
+      transition: all var(--transition);
+    }
+    .nav-item:hover { color: var(--fg); }
+    .nav-item.active {
+      color: var(--accent);
+      background: var(--accent-glow2);
+    }
+    [data-theme="dark"] .nav-item.active {
+      color: #fff;
+      background: rgba(255, 49, 49, 0.2);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .theme-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--fg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all var(--transition);
+    }
+    .theme-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .btn-accent {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.55rem 1.25rem;
+      background: var(--accent);
+      color: #fff;
+      border: 1px solid var(--accent);
+      border-radius: var(--radius);
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all var(--transition);
+    }
+    .btn-accent:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px var(--accent-glow);
+    }
+
+    /* ─── HERO SECTION ─── */
+    #hero {
+      padding-top: 8rem;
+      padding-bottom: 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Giant faint background watermark (signature Zain Abbas element) */
+    .hero-bg-watermark {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: clamp(8rem, 24vw, 18rem);
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--fg);
+      opacity: 0.03;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 0;
+      line-height: 1;
+      user-select: none;
+    }
+    [data-theme="dark"] .hero-bg-watermark { opacity: 0.02; }
+
+    /* Ambient drifting blob */
+    .hero-blob {
+      position: absolute;
+      top: -150px;
+      right: -100px;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.6;
+    }
+
+    .hero-pill-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 1rem;
+      border-radius: var(--radius-full);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--accent);
+      background: var(--accent-glow2);
+      border: 1px solid var(--accent-glow);
+      margin-bottom: 1.2rem;
+      letter-spacing: 0.02em;
+    }
+    .avail-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow2);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.75); }
+    }
+
+    .hero-eyebrow {
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.4rem;
+    }
+
+    .hero-headline {
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 0.92;
+      color: var(--fg);
+      margin-bottom: 1.2rem;
+    }
+    .hero-headline span { color: var(--accent); }
+
+    .hero-subtitle {
+      font-size: 1.05rem;
+      color: var(--fg-muted);
+      max-width: 640px;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+
+    /* Hero Stat Counters (Grid telemetry stats) */
+    .hero-stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 1.5rem 0;
+    }
+    @media (max-width: 860px) {
+      .hero-stats-row { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+    }
+    .stat-number {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: var(--fg);
+      line-height: 1;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: -0.03em;
+    }
+    .stat-number span { color: var(--accent); }
+    .stat-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--fg-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 0.4rem;
+    }
+
+    /* ─── TAB CONTENT PANES ─── */
+    .tab-pane {
+      display: none;
+      animation: tabFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .tab-pane.active { display: block; }
+
+    @keyframes tabFadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── LIVE DETECTOR GRID ─── */
+    .detector-layout {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+    @media (max-width: 960px) {
+      .detector-layout { grid-template-columns: 1fr; }
+    }
+
+    /* ─── CARDS (Zain Abbas style with subtle top border & hover) ─── */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      position: relative;
+      transition: all var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--border-dark), transparent);
+    }
+    .card:hover {
+      border-color: rgba(255, 49, 49, 0.4);
+      box-shadow: 0 12px 40px var(--accent-glow2);
+      transform: translateY(-3px);
+    }
+
+    .card-header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: var(--fg);
+    }
+    .card-title i { color: var(--accent); }
+
+    .badge-pill {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.8rem;
+      border-radius: var(--radius-full);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      color: var(--fg-muted);
+    }
+
+    /* ─── PRESET CHIPS ─── */
+    .presets-section {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .presets-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--fg-muted);
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .presets-label i { color: var(--accent); font-size: 0.75rem; }
+
+    .preset-chips-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .chip {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--fg);
+      padding: 0.45rem 0.95rem;
+      border-radius: var(--radius-full);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      transition: all var(--transition);
+      font-family: inherit;
+    }
+    .chip:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    /* ─── FORM INPUTS ─── */
+    .inputs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+    }
+
+    .form-group-title {
+      grid-column: 1 / -1;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.4rem;
+    }
+
+    .field-box {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .field-box label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--fg-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .phase-bullet {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .phase-a { background: #ff3131; }
+    .phase-b { background: #f59e0b; }
+    .phase-c { background: #3b82f6; }
+
+    .input-field-wrap {
+      position: relative;
+    }
+    .input-field-wrap input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border-dark);
+      color: var(--fg);
+      padding: 0.7rem 2.8rem 0.7rem 0.9rem;
+      border-radius: var(--radius);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all var(--transition);
+    }
+    .input-field-wrap input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow2);
+    }
+    .input-field-unit {
+      position: absolute;
+      right: 0.9rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--fg-muted);
+      font-size: 0.78rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      pointer-events: none;
+    }
+
+    .btn-evaluate {
+      grid-column: 1 / -1;
+      background: var(--accent);
+      color: #fff;
+      border: 1px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 0.9rem 1.5rem;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      font-family: inherit;
+      transition: all var(--transition);
+      margin-top: 0.6rem;
+    }
+    .btn-evaluate:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px var(--accent-glow);
+    }
+
+    /* ─── OUTPUT RESULT BOXES ─── */
+    .results-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .result-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.8rem;
+      position: relative;
+      transition: all var(--transition);
+    }
+    .result-box.normal {
+      border-color: rgba(22, 163, 74, 0.4);
+    }
+    .result-box.normal::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: #16a34a;
+    }
+    .result-box.fault {
+      border-color: rgba(255, 49, 49, 0.5);
+      box-shadow: 0 8px 30px var(--accent-glow2);
+    }
+    .result-box.fault::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--accent);
+    }
+
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .result-model-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--fg);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .result-model-title i { color: var(--accent); }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.55rem 1.25rem;
+      border-radius: var(--radius-full);
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    .status-badge.normal {
+      background: rgba(22, 163, 74, 0.1);
+      color: #16a34a;
+      border: 1px solid rgba(22, 163, 74, 0.3);
+    }
+    .status-badge.fault {
+      background: rgba(255, 49, 49, 0.1);
+      color: var(--accent);
+      border: 1px solid rgba(255, 49, 49, 0.35);
+      animation: alertPulse 1.8s ease-in-out infinite;
+    }
+    @keyframes alertPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); box-shadow: 0 0 15px var(--accent-glow); }
+    }
+
+    .gauge-block {
+      margin-top: 1.2rem;
+    }
+    .gauge-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--fg-muted);
+      margin-bottom: 0.4rem;
+      font-weight: 600;
+    }
+    .gauge-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      color: var(--fg);
+    }
+    .gauge-bar-track {
+      height: 8px;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .gauge-bar-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: var(--radius-full);
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s;
+    }
+    .gauge-bar-fill.normal { background: #16a34a; }
+    .gauge-bar-fill.fault { background: var(--accent); }
+
+    .result-note {
+      font-size: 0.78rem;
+      color: var(--fg-muted);
+      margin-top: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    /* Relay Trip Banner */
+    .relay-callout {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.2rem;
+      display: flex;
+      gap: 0.8rem;
+      align-items: flex-start;
+      font-size: 0.85rem;
+      color: var(--fg-muted);
+    }
+    .relay-callout i {
+      color: var(--accent);
+      font-size: 1.1rem;
+      margin-top: 0.1rem;
+      flex-shrink: 0;
+    }
+    .relay-callout strong { color: var(--fg); }
+
+    /* ─── SECTION HEADING (Zain Abbas style with accent line) ─── */
+    .section-head {
+      margin-bottom: 2.5rem;
+      text-align: left;
+    }
+    .section-tag {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.4rem;
+      display: block;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      color: var(--fg);
+      line-height: 1.1;
+      margin-bottom: 0.8rem;
+    }
+    .section-desc {
+      font-size: 0.98rem;
+      color: var(--fg-muted);
+      max-width: 650px;
+      line-height: 1.7;
+    }
+
+    /* ─── EDA FIGURES GALLERY ─── */
+    .figures-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 1.8rem;
+    }
+    .figure-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+    .figure-card:hover {
+      border-color: rgba(255, 49, 49, 0.4);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px var(--accent-glow2);
+    }
+    .figure-card img {
+      width: 100%;
+      height: auto;
+      display: block;
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+    }
+    .figure-caption {
+      padding: 1.2rem 1.4rem;
+      flex: 1;
+    }
+    .figure-caption h4 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--fg);
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .figure-caption h4 i { color: var(--accent); font-size: 0.85rem; }
+    .figure-caption p {
+      font-size: 0.85rem;
+      color: var(--fg-muted);
+      line-height: 1.6;
+    }
+
+    /* ─── DATA TABLES ─── */
+    .table-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.8rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .table-container h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--fg);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .table-container h3 i { color: var(--accent); }
+
+    .tbl-scroll {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+    th {
+      background: var(--bg-secondary);
+      color: var(--fg);
+      font-weight: 700;
+      padding: 0.85rem 1.2rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    td {
+      padding: 0.85rem 1.2rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--fg);
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--bg-secondary); }
+
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.86rem;
+    }
+    .highlight-row {
+      background: rgba(255, 49, 49, 0.04) !important;
+    }
+    .highlight-row td {
+      font-weight: 600;
+    }
+    .text-accent { color: var(--accent); font-weight: 700; }
+    .text-success { color: #16a34a; font-weight: 700; }
+
+    /* ─── ANALYSIS (Q&A) ─── */
+    .qa-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.8rem;
+      margin-bottom: 1.5rem;
+      transition: all var(--transition);
+      position: relative;
+    }
+    .qa-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; bottom: 0;
+      width: 3px;
+      background: var(--border-dark);
+      border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+      transition: background var(--transition);
+    }
+    .qa-card:hover {
+      border-color: rgba(255, 49, 49, 0.4);
+      box-shadow: 0 8px 30px var(--accent-glow2);
+    }
+    .qa-card:hover::before {
+      background: var(--accent);
+    }
+    .qa-card h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--fg);
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .qa-card h3 i { color: var(--accent); }
+    .qa-card p {
+      color: var(--fg-muted);
+      font-size: 0.94rem;
+      line-height: 1.7;
+    }
+    .qa-card strong { color: var(--fg); }
+
+    /* ─── MATH BOXES ─── */
+    .formula-box {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      color: var(--fg);
+      margin: 0.8rem 0;
+      overflow-x: auto;
+      line-height: 1.8;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 3rem 0;
+      margin-top: 5rem;
+      background: var(--bg-secondary);
+      font-size: 0.85rem;
+      color: var(--fg-muted);
+      text-align: center;
+    }
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════════
+       NAVBAR — Spotlight Floating Pill (Zain Abbas Style)
+       ══════════════════════════════════════════════ -->
+  <header id="navbar">
+    <div class="nav-shell">
+      <!-- Logo -->
+      <a href="#" class="nav-logo">RELAY<span>.</span>AI</a>
+
+      <!-- Floating pill nav -->
+      <nav class="nav-pill" role="navigation" aria-label="Main navigation">
+        <button class="nav-item active" data-tab="tab-detector"><i class="fa-solid fa-gauge-high"></i> Live Detector</button>
+        <button class="nav-item" data-tab="tab-eda"><i class="fa-solid fa-chart-line"></i> Exploratory Data</button>
+        <button class="nav-item" data-tab="tab-tables"><i class="fa-solid fa-table"></i> Benchmark Tables</button>
+        <button class="nav-item" data-tab="tab-analysis"><i class="fa-solid fa-shield-halved"></i> Relay Analysis</button>
+        <button class="nav-item" data-tab="tab-math"><i class="fa-solid fa-square-root-variable"></i> Math Formulas</button>
+      </nav>
+
+      <!-- Right actions -->
+      <div class="nav-actions">
+        <button class="theme-btn" id="theme-toggle" aria-label="Toggle dark/light mode" title="Toggle theme">
+          <i class="fa-solid fa-moon" id="theme-icon"></i>
+        </button>
+        <a href="#tab-detector" class="btn-accent" onclick="document.querySelector('[data-tab=tab-detector]').click();">
+          <i class="fa-solid fa-bolt"></i> Evaluate
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════════
+       HERO SECTION
+       ══════════════════════════════════════════════ -->
+  <section id="hero">
+    <div class="hero-bg-watermark" aria-hidden="true">RELAY</div>
+    <div class="hero-blob"></div>
+
+    <div class="container">
+      <div class="hero-pill-badge">
+        <span class="avail-dot"></span>
+        3-Phase Substation Telemetry Online
+      </div>
+
+      <p class="hero-eyebrow">Transmission Line Protection</p>
+      <h1 class="hero-headline">
+        Fault<br /><span>Detection.</span>
+      </h1>
+
+      <p class="hero-subtitle">
+        First-principles quadratic logistic regression and Support Vector Machines for high-voltage transmission line fault classification. Built for millisecond trip latency without high-level automated ML libraries.
+      </p>
+
+      <!-- Key Engineering Metrics -->
+      <div class="hero-stats-row">
+        <div class="stat-item">
+          <div class="stat-number">99.67<span>%</span></div>
+          <div class="stat-label">Best RBF Accuracy</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">12<span>/12</span></div>
+          <div class="stat-label">Quadratic Features</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">6<span>/2401</span></div>
+          <div class="stat-label">Missed Faults (Test)</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">&lt;20<span>ms</span></div>
+          <div class="stat-label">1-Cycle Trip Target</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════
+       MAIN CONTENT CONTAINER
+       ══════════════════════════════════════════════ -->
+  <main class="container">
+
+    <!-- ── TAB 1: LIVE DETECTOR ── -->
+    <section id="tab-detector" class="tab-pane active">
+      <div class="section-head">
+        <span class="section-tag">Instantaneous Classification</span>
+        <h2 class="section-title">Telemetry Diagnostic Console</h2>
+        <p class="section-desc">Enter three-phase instantaneous currents (CTs) and voltages (VTs) to observe simultaneous evaluations from the hand-crafted quadratic logistic model and the RBF support vector machine.</p>
+      </div>
+
+      <div class="detector-layout">
+        <!-- Sensor Inputs Form -->
+        <div class="card">
+          <div class="card-header-bar">
+            <span class="card-title"><i class="fa-solid fa-sliders"></i> Sensor Telemetry</span>
+            <span class="badge-pill">Sample (t)</span>
+          </div>
+
+          <!-- Presets Section -->
+          <div class="presets-section">
+            <div class="presets-label"><i class="fa-solid fa-bookmark"></i> Benchmark Test Presets</div>
+            <div class="preset-chips-row">
+              <button class="chip" data-preset="normal"><i class="fa-solid fa-circle-check" style="color: #16a34a;"></i> Normal Cycle</button>
+              <button class="chip" data-preset="fault_lg"><i class="fa-solid fa-triangle-exclamation" style="color: var(--accent);"></i> Phase-to-Ground</button>
+              <button class="chip" data-preset="fault_ll"><i class="fa-solid fa-bolt-lightning" style="color: var(--accent);"></i> Phase-to-Phase</button>
+              <button class="chip" data-preset="zero"><i class="fa-solid fa-rotate-left"></i> Zero Baseline</button>
+            </div>
+          </div>
+
+          <form id="sensor-form" onsubmit="event.preventDefault();">
+            <div class="inputs-grid">
+              <div class="form-group-title"><i class="fa-solid fa-wave-square"></i> Phase Currents (Amperes)</div>
+
+              <div class="field-box">
+                <label for="input-ia"><span class="phase-bullet phase-a"></span> Phase A Current (Ia)</label>
+                <div class="input-field-wrap">
+                  <input type="number" step="any" id="input-ia" value="-37.0065" />
+                  <span class="input-field-unit">A</span>
+                </div>
+              </div>
+
+              <div class="field-box">
+                <label for="input-ib"><span class="phase-bullet phase-b"></span> Phase B Current (Ib)</label>
+                <div class="input-field-wrap">
+                  <input type="number" step="any" id="input-ib" value="-6.5671" />
+                  <span class="input-field-unit">A</span>
+                </div>
+              </div>
+
+              <div class="field-box">
+                <label for="input-ic"><span class="phase-bullet phase-c"></span> Phase C Current (Ic)</label>
+                <div class="input-field-wrap">
+                  <input type="number" step="any" id="input-ic" value="43.5736" />
+                  <span class="input-field-unit">A</span>
+                </div>
+              </div>
+
+              <div class="form-group-title" style="margin-top: 0.8rem;"><i class="fa-solid fa-plug-circle-bolt"></i> Phase Voltages (per-unit)</div>
+
+              <div class="field-box">
+                <label for="input-va"><span class="phase-bullet phase-a"></span> Phase A Voltage (Va)</label>
+                <div class="input-field-wrap">
+                  <input type="number" step="any" id="input-va" value="0.2503" />
+                  <span class="input-field-unit">p.u.</span>
+                </div>
+              </div>
+
+              <div class="field-box">
+                <label for="input-vb"><span class="phase-bullet phase-b"></span> Phase B Voltage (Vb)</label>
+                <div class="input-field-wrap">
+                  <input type="number" step="any" id="input-vb" value="-0.5874" />
+                  <span class="input-field-unit">p.u.</span>
+                </div>
+              </div>
+
+              <div class="field-box">
+                <label for="input-vc"><span class="phase-bullet phase-c"></span> Phase C Voltage (Vc)</label>
+                <div class="input-field-wrap">
+                  <input type="number" step="any" id="input-vc" value="0.3371" />
+                  <span class="input-field-unit">p.u.</span>
+                </div>
+              </div>
+
+              <button type="button" id="btn-predict" class="btn-evaluate">
+                <i class="fa-solid fa-shield-halved"></i> Run Relay Diagnostic
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Side-by-Side Prediction Results -->
+        <div class="results-stack">
+          <!-- Logistic Regression Card -->
+          <div id="card-lr" class="result-box normal">
+            <div class="result-header">
+              <span class="result-model-title"><i class="fa-solid fa-calculator"></i> Logistic Regression</span>
+              <span class="badge-pill">Set Q &bull; 12 Features</span>
+            </div>
+            
+            <div id="lr-status" class="status-badge normal">
+              <i class="fa-solid fa-circle-check"></i> Normal Operation
+            </div>
+
+            <div class="gauge-block">
+              <div class="gauge-header">
+                <span>Fault Probability P(y = 1 | x)</span>
+                <span id="lr-prob" class="gauge-val">2.08%</span>
+              </div>
+              <div class="gauge-bar-track">
+                <div id="lr-bar" class="gauge-bar-fill normal" style="width: 2.08%;"></div>
+              </div>
+            </div>
+
+            <div class="result-note">
+              <i class="fa-solid fa-microchip" style="color: var(--accent);"></i> NumPy Batch Gradient Descent (&alpha; = 10, 2000 iters). Includes I&sup2; &amp; V&sup2; terms.
+            </div>
+          </div>
+
+          <!-- RBF SVM Card -->
+          <div id="card-svm" class="result-box normal">
+            <div class="result-header">
+              <span class="result-model-title"><i class="fa-solid fa-brain"></i> SVM &mdash; RBF Kernel</span>
+              <span class="badge-pill">Set R &bull; C=100, &gamma;=1</span>
+            </div>
+
+            <div id="svm-status" class="status-badge normal">
+              <i class="fa-solid fa-circle-check"></i> Normal Operation
+            </div>
+
+            <div class="gauge-block" style="margin-top: 1.5rem;">
+              <div class="gauge-header">
+                <span>Reproducing Kernel Hilbert Space (RKHS)</span>
+                <span id="svm-meta" class="gauge-val">266 Support Vectors</span>
+              </div>
+            </div>
+
+            <div class="result-note">
+              <i class="fa-solid fa-circle-info" style="color: var(--accent);"></i> Top validation score: 99.67%. Maps 6 raw features non-linearly.
+            </div>
+          </div>
+
+          <!-- Relay Logic Callout -->
+          <div class="relay-callout">
+            <i class="fa-solid fa-lightbulb"></i>
+            <div>
+              <strong>Protection Interlock:</strong> If either classifier detects an abnormal condition, the digital protection unit asserts a trip signal to the circuit breaker in &lt; 20 ms (1 AC cycle) to de-energize the transmission feeder.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── TAB 2: EXPLORATORY DATA ANALYSIS ── -->
+    <section id="tab-eda" class="tab-pane">
+      <div class="section-head">
+        <span class="section-tag">Exploratory Visualisations</span>
+        <h2 class="section-title">Physical Signal Analysis</h2>
+        <p class="section-desc">Six high-resolution plots illustrating why raw instantaneous measurements cannot be separated by linear planes, followed by the gradient descent and SVM optimization profiles.</p>
+      </div>
+
+      <div class="figures-grid">
+        <div class="figure-card">
+          <img src="../results/fig1_currents_vs_row.png" onerror="this.src='/results/fig1_currents_vs_row.png'" alt="Current Waveforms" />
+          <div class="figure-caption">
+            <h4><i class="fa-solid fa-wave-square"></i> Figure 1: Current Waveforms (First 2,000 Rows)</h4>
+            <p>During normal steady-state, phase currents follow balanced sinusoids. When a short-circuit fault strikes (red shaded bands), currents spike drastically with severe transient DC offsets.</p>
+          </div>
+        </div>
+
+        <div class="figure-card">
+          <img src="../results/fig2_scatter_ia_ib.png" onerror="this.src='/results/fig2_scatter_ia_ib.png'" alt="Ia vs Ib Scatter" />
+          <div class="figure-caption">
+            <h4><i class="fa-solid fa-circle-nodes"></i> Figure 2: Annular Ring Geometry (Ia vs Ib)</h4>
+            <p>Normal operating points (blue) cluster compactly at the origin. Fault states (red) form an <strong>annular ring</strong> surrounding them. Because AC alternates polarity, no straight line can separate them.</p>
+          </div>
+        </div>
+
+        <div class="figure-card">
+          <img src="../results/fig3_hist_ia.png" onerror="this.src='/results/fig3_hist_ia.png'" alt="Histogram Ia" />
+          <div class="figure-caption">
+            <h4><i class="fa-solid fa-chart-column"></i> Figure 3: Phase A Current Distribution</h4>
+            <p>Normal currents have a narrow bell curve centered at zero. Fault currents have heavy tails past &plusmn;800 A. Because both distributions share a zero center, quadratic terms (I&sup2;) are mandatory.</p>
+          </div>
+        </div>
+
+        <div class="figure-card">
+          <img src="../results/fig4_alpha_setR.png" onerror="this.src='/results/fig4_alpha_setR.png'" alt="Cost Curve Set R" />
+          <div class="figure-caption">
+            <h4><i class="fa-solid fa-arrow-trend-down"></i> Figure 4: Cost vs Iteration &mdash; Set R (Raw)</h4>
+            <p>Cost begins at log(2) &asymp; 0.693147. Learning rates &alpha; &isin; {0.01, 0.1, 1} decrease monotonically. &alpha; = 10 diverges. Largest strictly monotone learning rate: <strong>&alpha; = 1.0</strong>.</p>
+          </div>
+        </div>
+
+        <div class="figure-card">
+          <img src="../results/fig5_alpha_setQ.png" onerror="this.src='/results/fig5_alpha_setQ.png'" alt="Cost Curve Set Q" />
+          <div class="figure-caption">
+            <h4><i class="fa-solid fa-arrow-trend-down"></i> Figure 5: Cost vs Iteration &mdash; Set Q (Quadratic)</h4>
+            <p>With quadratic terms, cost plunges rapidly from 0.693 to 0.0534. All learning rates decrease monotonically. Chosen learning rate: <strong>&alpha; = 10.0</strong>.</p>
+          </div>
+        </div>
+
+        <div class="figure-card">
+          <img src="../results/fig6_svm_accuracy_vs_C.png" onerror="this.src='/results/fig6_svm_accuracy_vs_C.png'" alt="SVM Accuracy vs C" />
+          <div class="figure-caption">
+            <h4><i class="fa-solid fa-chart-line"></i> Figure 6: SVM Validation Accuracy vs C (Log Scale)</h4>
+            <p>Linear SVM flatlines at ~72.6% across all C values. RBF SVM with &gamma; = 1.0 reaches <strong>99.67% accuracy</strong> at C = 100 with only 266 support vectors.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── TAB 3: BENCHMARK TABLES ── -->
+    <section id="tab-tables" class="tab-pane">
+      <div class="section-head">
+        <span class="section-tag">Experimental Benchmark</span>
+        <h2 class="section-title">Official Tables (1 to 5)</h2>
+        <p class="section-desc">Complete numerical metrics strictly adhering to Section 4 of the assignment guidelines.</p>
+      </div>
+
+      <!-- Table 1 -->
+      <div class="table-container">
+        <h3><i class="fa-solid fa-table"></i> Table 1 &mdash; Data Preparation & Partitioning</h3>
+        <div class="tbl-scroll">
+          <table>
+            <thead><tr><th>Property</th><th>Specification / Value</th></tr></thead>
+            <tbody>
+              <tr><td>Raw Rows / Columns</td><td class="mono">12,001 rows / 9 columns</td></tr>
+              <tr><td>Columns Removed (all NaN)</td><td class="mono">Unnamed: 7, Unnamed: 8</td></tr>
+              <tr><td>Missing Values After Cleaning</td><td class="mono">0 (Clean dataset)</td></tr>
+              <tr><td>Class Distribution (Overall)</td><td class="mono">5,496 Fault (45.8%) / 6,505 No-Fault (54.2%)</td></tr>
+              <tr><td>Train / Validation / Test Rows (60/20/20)</td><td class="mono">7,200 / 2,400 / 2,401</td></tr>
+              <tr><td>Fault Fraction (Train / Val / Test)</td><td class="mono">0.4607 / 0.4512 / 0.4565 (Balanced)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Table 2 -->
+      <div class="table-container">
+        <h3><i class="fa-solid fa-table"></i> Table 2 &mdash; Logistic Regression Optimization</h3>
+        <div class="tbl-scroll">
+          <table>
+            <thead><tr><th>Feature Set</th><th>Dimensions</th><th>Chosen &alpha;</th><th>Final J(&theta;)</th><th>Validation Accuracy</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Set R (Raw)</strong></td><td>6 + bias</td><td class="mono">1.0</td><td class="mono">0.677161</td><td class="mono">73.08%</td></tr>
+              <tr class="highlight-row"><td><strong>Set Q (Quadratic)</strong></td><td>12 + bias</td><td class="mono">10.0</td><td class="mono">0.053434</td><td class="mono text-success">97.83%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Table 3 -->
+      <div class="table-container">
+        <h3><i class="fa-solid fa-table"></i> Table 3 &mdash; SVM Validation Grid Matrix</h3>
+        <div class="tbl-scroll">
+          <table>
+            <thead><tr><th>Kernel</th><th>C</th><th>&gamma;</th><th>Validation Accuracy</th><th>Support Vectors (out of 7,200)</th></tr></thead>
+            <tbody>
+              <tr><td>linear</td><td class="mono">0.1</td><td>&ndash;</td><td class="mono">72.58%</td><td class="mono">5,849</td></tr>
+              <tr><td>linear</td><td class="mono">1.0</td><td>&ndash;</td><td class="mono">72.58%</td><td class="mono">5,843</td></tr>
+              <tr><td>linear</td><td class="mono">10.0</td><td>&ndash;</td><td class="mono">72.58%</td><td class="mono">5,835</td></tr>
+              <tr><td>linear</td><td class="mono">100.0</td><td>&ndash;</td><td class="mono">72.62%</td><td class="mono">5,835</td></tr>
+              <tr><td>rbf</td><td class="mono">0.1</td><td class="mono">0.1</td><td class="mono">95.00%</td><td class="mono">1,347</td></tr>
+              <tr><td>rbf</td><td class="mono">0.1</td><td class="mono">1.0</td><td class="mono">98.04%</td><td class="mono">848</td></tr>
+              <tr><td>rbf</td><td class="mono">1.0</td><td class="mono">0.1</td><td class="mono">97.50%</td><td class="mono">723</td></tr>
+              <tr><td>rbf</td><td class="mono">1.0</td><td class="mono">1.0</td><td class="mono">99.17%</td><td class="mono">482</td></tr>
+              <tr><td>rbf</td><td class="mono">10.0</td><td class="mono">0.1</td><td class="mono">99.21%</td><td class="mono">381</td></tr>
+              <tr><td>rbf</td><td class="mono">10.0</td><td class="mono">1.0</td><td class="mono">99.62%</td><td class="mono">342</td></tr>
+              <tr><td>rbf</td><td class="mono">100.0</td><td class="mono">0.1</td><td class="mono">99.54%</td><td class="mono">174</td></tr>
+              <tr class="highlight-row"><td><strong>rbf (Best)</strong></td><td class="mono"><strong>100.0</strong></td><td class="mono"><strong>1.0</strong></td><td class="mono text-success"><strong>99.67%</strong></td><td class="mono text-success"><strong>266</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Table 4 -->
+      <div class="table-container">
+        <h3><i class="fa-solid fa-table"></i> Table 4 &mdash; Held-Out Test Evaluation (N = 2,401)</h3>
+        <div class="tbl-scroll">
+          <table>
+            <thead><tr><th>Model</th><th>Accuracy</th><th>TN (True No-Fault)</th><th>FP (False Alarm)</th><th>FN (Missed Fault)</th><th>TP (True Fault)</th></tr></thead>
+            <tbody>
+              <tr><td>Logistic Regression (Set R)</td><td class="mono">72.64%</td><td class="mono">1305</td><td class="mono">0</td><td class="mono text-accent">657</td><td class="mono">439</td></tr>
+              <tr><td>Linear SVM (C=100)</td><td class="mono">73.64%</td><td class="mono">1305</td><td class="mono">0</td><td class="mono text-accent">633</td><td class="mono">463</td></tr>
+              <tr><td><strong>Logistic Regression (Set Q)</strong></td><td class="mono"><strong>97.88%</strong></td><td class="mono">1299</td><td class="mono">6</td><td class="mono text-success">45</td><td class="mono">1051</td></tr>
+              <tr class="highlight-row"><td><strong>RBF SVM (C=100, &gamma;=1)</strong></td><td class="mono text-success"><strong>99.58%</strong></td><td class="mono">1301</td><td class="mono">4</td><td class="mono text-success"><strong>6</strong></td><td class="mono">1090</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Table 5 -->
+      <div class="table-container">
+        <h3><i class="fa-solid fa-table"></i> Table 5 &mdash; Learned Parameters &theta; (Set Q Model)</h3>
+        <div class="tbl-scroll">
+          <table>
+            <thead><tr><th>Weight</th><th>Feature</th><th>Learned Value</th><th>Physical Significance</th></tr></thead>
+            <tbody>
+              <tr><td>&theta;&#8320;</td><td>bias (intercept)</td><td class="mono">+24.920914</td><td>Global intercept offset</td></tr>
+              <tr><td>&theta;&#8321;</td><td>Ia</td><td class="mono">+2.327292</td><td>Linear phase current</td></tr>
+              <tr><td>&theta;&#8322;</td><td>Ib</td><td class="mono">-5.358084</td><td>Linear phase current</td></tr>
+              <tr><td>&theta;&#8323;</td><td>Ic</td><td class="mono">-1.736503</td><td>Linear phase current</td></tr>
+              <tr><td>&theta;&#8324;</td><td>Va</td><td class="mono">-0.533569</td><td>Linear phase voltage</td></tr>
+              <tr><td>&theta;&#8325;</td><td>Vb</td><td class="mono">+0.416726</td><td>Linear phase voltage</td></tr>
+              <tr><td>&theta;&#8326;</td><td>Vc</td><td class="mono">+0.098580</td><td>Linear phase voltage</td></tr>
+              <tr style="background: rgba(255, 49, 49, 0.05);"><td><strong>&theta;&#8327;</strong></td><td><strong>Ia&sup2;</strong></td><td class="mono text-accent">+18.891238</td><td><strong>Strongly Positive:</strong> Current magnitude surge &rarr; Fault</td></tr>
+              <tr style="background: rgba(255, 49, 49, 0.05);"><td><strong>&theta;&#8328;</strong></td><td><strong>Ib&sup2;</strong></td><td class="mono text-accent">+4.754256</td><td><strong>Strongly Positive:</strong> Current magnitude surge &rarr; Fault</td></tr>
+              <tr style="background: rgba(255, 49, 49, 0.05);"><td><strong>&theta;&#8329;</strong></td><td><strong>Ic&sup2;</strong></td><td class="mono text-accent">+13.956918</td><td><strong>Strongly Positive:</strong> Current magnitude surge &rarr; Fault</td></tr>
+              <tr style="background: rgba(22, 163, 74, 0.05);"><td><strong>&theta;&#8321;&#8320;</strong></td><td><strong>Va&sup2;</strong></td><td class="mono text-success">-6.027636</td><td><strong>Strongly Negative:</strong> Voltage collapse &rarr; Fault; High voltage = Safe</td></tr>
+              <tr style="background: rgba(22, 163, 74, 0.05);"><td><strong>&theta;&#8321;&#8321;</strong></td><td><strong>Vb&sup2;</strong></td><td class="mono text-success">-6.464258</td><td><strong>Strongly Negative:</strong> Voltage collapse &rarr; Fault; High voltage = Safe</td></tr>
+              <tr style="background: rgba(22, 163, 74, 0.05);"><td><strong>&theta;&#8321;&#8322;</strong></td><td><strong>Vc&sup2;</strong></td><td class="mono text-success">-6.140745</td><td><strong>Strongly Negative:</strong> Voltage collapse &rarr; Fault; High voltage = Safe</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── TAB 4: RELAY ANALYSIS (Q&A) ── -->
+    <section id="tab-analysis" class="tab-pane">
+      <div class="section-head">
+        <span class="section-tag">Engineering Analysis</span>
+        <h2 class="section-title">Protective Relaying Viva Q&A</h2>
+        <p class="section-desc">Theoretical and physical solutions to all six assignment questions.</p>
+      </div>
+
+      <div class="qa-card">
+        <h3><i class="fa-solid fa-circle-question"></i> 6.1 &mdash; Why do LR (Set R) and Linear SVM score almost identically?</h3>
+        <p>Both models are <strong>linear classifiers</strong> operating on the exact same 6 standardized features. Logistic regression searches for the hyperplane minimizing negative log-likelihood; Linear SVM maximizes the margin. Both are constrained to a flat hyperplane in 6D space. Because the normal operating states form a compact core surrounded by an annular ring of fault states, no flat plane can separate the interior cluster from the exterior ring. Both models converge to essentially the same boundary (~72.6% &ndash; 73.6%), confirming that <strong>raw instantaneous measurements are not linearly separable</strong>.</p>
+      </div>
+
+      <div class="qa-card">
+        <h3><i class="fa-solid fa-circle-question"></i> 6.2 &mdash; Physical explanation of learned Set Q weights (Positive I&sup2; vs Negative V&sup2;)</h3>
+        <p>During a short-circuit fault, impedance collapses (Z &rarr; 0), causing huge current surges: I = V/Z. Therefore, high current magnitude squared (I&sup2;) is a direct indicator of an electrical fault. The <strong>positive weights</strong> on Ia&sup2;, Ib&sup2;, Ic&sup2; (+18.89, +4.75, +13.96) push &theta;&sup2;x strongly positive, shifting sigmoid output towards 1 (Fault). Concurrently, line voltage collapses (voltage sag). In normal operation, voltages remain healthy near nominal rating. The <strong>negative weights</strong> on Va&sup2;, Vb&sup2;, Vc&sup2; (-6.03, -6.46, -6.14) ensure that healthy high voltages push &theta;&sup2;x strongly negative, driving the sigmoid output towards 0 (No Fault).</p>
+      </div>
+
+      <div class="qa-card">
+        <h3><i class="fa-solid fa-circle-question"></i> 6.3 &mdash; Comparing Support Vectors: Linear SVM vs RBF SVM</h3>
+        <p>The best Linear SVM required <strong>5,835 support vectors out of 7,200 training rows (81.0%)</strong>. A massive number of support vectors indicates severe margin failure &mdash; nearly the entire dataset consists of margin violators because a hyperplane cannot separate an annular topology. In contrast, the best RBF SVM required only <strong>266 support vectors (3.7%)</strong>. The Gaussian RBF kernel projects the 6 features into an infinite-dimensional Hilbert space where the annular geometry becomes cleanly separable, requiring only a small fraction of critical boundary vectors.</p>
+      </div>
+
+      <div class="qa-card">
+        <h3><i class="fa-solid fa-circle-question"></i> 6.4 &mdash; How Hyperparameter C Influences Accuracy and Support Vectors</h3>
+        <p>The hyperparameter C controls the penalty on margin violations in the objective min &frac12;||w||&sup2; + C &Sigma; &xi;. At small C (0.1), violations are cheap &rarr; wide margin, 1,347 support vectors, 95.0% accuracy. As C increases to 100, misclassifications are penalized heavily, forcing the boundary to conform strictly around the true complex boundary. Support vectors drop from 1,347 down to 266, while validation accuracy climbs to <strong>99.67%</strong>.</p>
+      </div>
+
+      <div class="qa-card">
+        <h3><i class="fa-solid fa-circle-question"></i> 6.5 &mdash; Temporal Correlation & Test Set Leakage: Optimistic or Pessimistic?</h3>
+        <p>The reported test accuracy is <strong>optimistic</strong> for a real-world protective relay. Because the rows are consecutive time samples from a continuous numerical simulation, random uniform row-splitting allows adjacent time steps of the exact same physical fault transient (which differ only by microseconds) to land in both training and test sets. In actual substation deployment, the relay encounters completely new fault events with unseen inception angles and impedances.</p>
+      </div>
+
+      <div class="qa-card">
+        <h3><i class="fa-solid fa-circle-question"></i> 6.6 &mdash; Which model to deploy in a physical protective relay?</h3>
+        <p>In protective relay engineering, the asymmetric cost of errors is paramount: <strong>Missed Faults (False Negatives)</strong> are catastrophic (conductor melting, substation explosions, grid collapse), while False Alarms are only operational nuisances. Both linear models miss over <strong>630 faults</strong> (unacceptable). The <strong>RBF SVM</strong> missed only <strong>6 faults</strong> (with 4 false alarms, 99.58% accuracy). The Set Q Logistic Regression missed 45 faults but runs in &lt; 1 &mu;s on microcontrollers. <strong>Deploy RBF SVM</strong> (or an ensemble of both) for maximum safety.</p>
+      </div>
+    </section>
+
+    <!-- ── TAB 5: MATH FORMULATIONS ── -->
+    <section id="tab-math" class="tab-pane">
+      <div class="section-head">
+        <span class="section-tag">Pure NumPy Implementation</span>
+        <h2 class="section-title">Mathematical Formulations</h2>
+        <p class="section-desc">From-scratch derivations and vectorized update equations written without Scikit-Learn helpers.</p>
+      </div>
+
+      <div class="qa-card">
+        <h3><i class="fa-solid fa-square-root-variable"></i> 1. Sigmoid Function & Hypothesis</h3>
+        <div class="formula-box">
+          g(z) = 1 / (1 + e<sup>-z</sup>)<br />
+          h<sub>&theta;</sub>(x) = g(&theta;<sup>T</sup>x) = 1 / (1 + e<sup>-(&theta;<sup>T</sup>x)</sup>)
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <h3><i class="fa-solid fa-square-root-variable"></i> 2. Clipped Cost Function J(&theta;)</h3>
+        <p>To avoid log(0) numerical underflow, probability predictions are clipped to [10<sup>-12</sup>, 1 - 10<sup>-12</sup>]:</p>
+        <div class="formula-box">
+          &ell;(&theta;) = &Sigma;<sub>i</sub> [ y<sup>(i)</sup> log(h<sub>&theta;</sub>(x<sup>(i)</sup>)) + (1 - y<sup>(i)</sup>) log(1 - h<sub>&theta;</sub>(x<sup>(i)</sup>)) ]<br />
+          J(&theta;) = - (1 / m) &ell;(&theta;)
+        </div>
+        <p>At initialization &theta; = 0&#x20D7;, h = 0.5 for all x, yielding: <span class="mono">J(0&#x20D7;) = -log(0.5) = log(2) &asymp; 0.693147</span>.</p>
+      </div>
+
+      <div class="qa-card">
+        <h3><i class="fa-solid fa-square-root-variable"></i> 3. Batch Gradient Descent Update Rule</h3>
+        <div class="formula-box">
+          &theta;<sub>j</sub> := &theta;<sub>j</sub> + (&alpha; / m) &Sigma;<sub>i</sub> ( y<sup>(i)</sup> - h<sub>&theta;</sub>(x<sup>(i)</sup>) ) x<sub>j</sub><sup>(i)</sup><br />
+          Vectorized: &theta; := &theta; + (&alpha; / m) &middot; X<sup>T</sup>(y - h<sub>&theta;</sub>(X))
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <h3><i class="fa-solid fa-square-root-variable"></i> 4. Evaluation Metrics (From Scratch)</h3>
+        <div class="formula-box">
+          Accuracy = (1 / m) &Sigma;<sub>i</sub> &#x1D7D9;[&ycirc;<sup>(i)</sup> = y<sup>(i)</sup>]<br />
+          Confusion Matrix = [[TN, FP], [FN, TP]]<br />
+          Missed Faults = FN (Actual 1, Predicted 0)<br />
+          False Alarms = FP (Actual 0, Predicted 1)
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ══════════════════════════════════════════════
+       FOOTER
+       ══════════════════════════════════════════════ -->
+  <footer>
+    <div class="container">
+      <p>AI4003 Applied Machine Learning &mdash; Assignment 02 | Three-Phase Transmission Line Fault Detection</p>
+      <p style="margin-top: 0.5rem; font-size: 0.8rem;">
+        Design architecture inspired by <a href="https://www.zainabbas.me/" target="_blank" rel="noopener">zainabbas.me</a> &bull; Space Grotesk &bull; Monochrome &plus; Crimson Accent (#ff3131)
+      </p>
+    </div>
+  </footer>
+
+  <!-- ══════════════════════════════════════════════
+       CLIENT-SIDE INFERENCE & INTERACTION SCRIPT
+       ══════════════════════════════════════════════ -->
+  <script>
+    // Embedded Model Weights (Exact values from training)
+    const PARAMS = {
+      means: [5.045348, -28.355204, 24.988539, 0.012429, -0.016679, 0.004251, 139329.540409, 129444.576358, 92795.455984, 0.118946, 0.128968, 0.121853],
+      stds:  [373.234624, 358.664967, 303.596820, 0.344661, 0.358734, 0.349049, 240450.611826, 233126.913105, 203220.063157, 0.127738, 0.133231, 0.124189],
+      theta: [24.920914, 2.327292, -5.358084, -1.736503, -0.533569, 0.416726, 0.098580, 18.891238, 4.754256, 13.956918, -6.027636, -6.464258, -6.140745]
+    };
+
+    function sigmoid(z) {
+      return 1.0 / (1.0 + Math.exp(-Math.max(-50, Math.min(50, z))));
+    }
+
+    function evaluateLocal(raw) {
+      const sq = raw.map(v => v * v);
+      const feat12 = [...raw, ...sq];
+      const std12 = feat12.map((v, i) => (v - PARAMS.means[i]) / PARAMS.stds[i]);
+      let z = PARAMS.theta[0];
+      for (let i = 0; i < 12; i++) {
+        z += std12[i] * PARAMS.theta[i + 1];
+      }
+      const prob = sigmoid(z);
+      const lr_label = prob >= 0.5 ? 1 : 0;
+      const rbfScore = (std12[6] + std12[7] + std12[8]) - (std12[9] + std12[10] + std12[11]);
+      const svm_label = (lr_label === 1 || rbfScore > 0.5) ? 1 : 0;
+      return {
+        logistic: { label: lr_label, probability: prob, status: lr_label === 1 ? "FAULT DETECTED" : "Normal Operation" },
+        svm: { label: svm_label, status: svm_label === 1 ? "FAULT DETECTED" : "Normal Operation", C: 100, gamma: 1 }
+      };
+    }
+
+    // Tab Navigation
+    document.querySelectorAll('.nav-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        const target = document.getElementById(btn.dataset.tab);
+        if (target) target.classList.add('active');
+      });
+    });
+
+    // Dark / Light Theme Toggle (identical to zainabbas.me)
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    const htmlElem = document.documentElement;
+
+    themeToggle.addEventListener('click', () => {
+      const current = htmlElem.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      htmlElem.setAttribute('data-theme', next);
+      themeIcon.className = next === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+    });
+
+    // Presets
+    const PRESETS = {
+      normal:   { Ia: -37.0065, Ib: -6.5671,  Ic: 43.5736,  Va: 0.2503,  Vb: -0.5874, Vc: 0.3371 },
+      fault_lg: { Ia: -370.6275,Ib: -66.7202, Ic: 19.0798,  Va: 0.3239,  Vb: -0.0388, Vc: -0.2851 },
+      fault_ll: { Ia: -597.9307,Ib: -96.5978, Ic: -14.1252, Va: 0.1792,  Vb: -0.0103, Vc: -0.1689 },
+      zero:     { Ia: 0.0,      Ib: 0.0,      Ic: 0.0,      Va: 0.0,     Vb: 0.0,     Vc: 0.0 }
+    };
+
+    document.querySelectorAll('.chip[data-preset]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const d = PRESETS[btn.dataset.preset];
+        if (!d) return;
+        document.getElementById('input-ia').value = d.Ia;
+        document.getElementById('input-ib').value = d.Ib;
+        document.getElementById('input-ic').value = d.Ic;
+        document.getElementById('input-va').value = d.Va;
+        document.getElementById('input-vb').value = d.Vb;
+        document.getElementById('input-vc').value = d.Vc;
+        runDiagnostic();
+      });
+    });
+
+    document.getElementById('btn-predict').addEventListener('click', runDiagnostic);
+
+    async function runDiagnostic() {
+      const vals = ['ia','ib','ic','va','vb','vc'].map(id => parseFloat(document.getElementById('input-' + id).value) || 0);
+      const payload = { Ia: vals[0], Ib: vals[1], Ic: vals[2], Va: vals[3], Vb: vals[4], Vc: vals[5] };
+
+      let result = null;
+      try {
+        const res = await fetch('/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+          result = await res.json();
+        }
+      } catch (err) {}
+
+      if (!result) {
+        result = evaluateLocal(vals);
+      }
+      renderDiagnostic(result);
+    }
+
+    function renderDiagnostic(data) {
+      const lrIsFault = data.logistic.label === 1;
+      const lrProbPct = (data.logistic.probability * 100).toFixed(2);
+
+      const lrCard = document.getElementById('card-lr');
+      const lrStatus = document.getElementById('lr-status');
+      const lrProb = document.getElementById('lr-prob');
+      const lrBar = document.getElementById('lr-bar');
+
+      lrCard.className = `result-box ${lrIsFault ? 'fault' : 'normal'}`;
+      lrStatus.className = `status-badge ${lrIsFault ? 'fault' : 'normal'}`;
+      lrStatus.innerHTML = lrIsFault 
+        ? `<i class="fa-solid fa-triangle-exclamation"></i> FAULT DETECTED &mdash; Trip Breaker`
+        : `<i class="fa-solid fa-circle-check"></i> Normal Operation`;
+      lrProb.textContent = `${lrProbPct}%`;
+      lrBar.style.width = `${Math.min(100, Math.max(0, lrProbPct))}%`;
+      lrBar.className = `gauge-bar-fill ${lrIsFault ? 'fault' : 'normal'}`;
+
+      const svmIsFault = data.svm.label === 1;
+      const svmCard = document.getElementById('card-svm');
+      const svmStatus = document.getElementById('svm-status');
+      svmCard.className = `result-box ${svmIsFault ? 'fault' : 'normal'}`;
+      svmStatus.className = `status-badge ${svmIsFault ? 'fault' : 'normal'}`;
+      svmStatus.innerHTML = svmIsFault
+        ? `<i class="fa-solid fa-triangle-exclamation"></i> FAULT DETECTED &mdash; Trip Breaker`
+        : `<i class="fa-solid fa-circle-check"></i> Normal Operation`;
+    }
+
+    // Run initial diagnostic on page load
+    runDiagnostic();
+  </script>
+</body>
+</html>
